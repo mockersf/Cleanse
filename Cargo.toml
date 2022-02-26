@@ -51,6 +51,3 @@ bevy_rapier2d = { git = "https://github.com/mockersf/bevy_rapier", branch = "bev
 
 [profile.dev.package."*"]
 opt-level = 3
-
-[profile.release]
-strip = true
