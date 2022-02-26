@@ -15,7 +15,7 @@ impl Plugin for GamePlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(state_management)
                     .with_system(player_movement::player_movements)
-                    .with_system(player_movement::camera_follow_player)
+                    .with_system(player_movement::camera_follow_player),
             );
     }
 }
