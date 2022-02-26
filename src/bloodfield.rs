@@ -15,6 +15,7 @@ use bevy::{
     },
     sprite::{Material2d, Material2dPipeline, Material2dPlugin, MaterialMesh2dBundle},
 };
+use rand::Rng;
 
 use crate::GameState;
 
@@ -56,7 +57,10 @@ fn setup(
                     scale: resolution.extend(1.0),
                     ..Default::default()
                 },
-                material: materials.add(BloodfieldMaterial::default()),
+                material: materials.add(BloodfieldMaterial {
+                    time: 0.0,
+                    seed: rand::thread_rng().gen::<i16>() as f32,
+                }),
                 ..Default::default()
             })
             .insert(ScreenTag);
@@ -90,6 +94,7 @@ fn update_bloodfield_material(
 #[uuid = "AC784C13-7197-40AB-BC3A-2ADD64F9E242"]
 struct BloodfieldMaterial {
     time: f32,
+    seed: f32,
 }
 
 #[derive(Clone)]
@@ -109,7 +114,7 @@ impl RenderAsset for BloodfieldMaterial {
         extracted_asset: Self::ExtractedAsset,
         (render_device, material_pipeline): &mut SystemParamItem<Self::Param>,
     ) -> Result<Self::PreparedAsset, PrepareAssetError<Self::ExtractedAsset>> {
-        let value = extracted_asset.time;
+        let value = Vec4::new(extracted_asset.time, extracted_asset.seed, 0.0, 0.0);
         let buffer = render_device.create_buffer_with_data(&BufferInitDescriptor {
             contents: value.as_std140().as_bytes(),
             label: Some("Bloodfield Settings Buffer"),
@@ -148,7 +153,7 @@ impl Material2d for BloodfieldMaterial {
                 ty: BindingType::Buffer {
                     ty: BufferBindingType::Uniform,
                     has_dynamic_offset: false,
-                    min_binding_size: BufferSize::new(f32::std140_size_static() as u64),
+                    min_binding_size: BufferSize::new(Vec4::std140_size_static() as u64),
                 },
                 count: None,
             }],

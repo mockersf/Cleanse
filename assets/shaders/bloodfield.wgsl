@@ -17,6 +17,7 @@ struct VertexOutput {
 
 struct Input {
     time: f32;
+    seed: f32;
 };
 
 [[group(0), binding(0)]]
@@ -68,7 +69,7 @@ fn fragment(in: VertexOutput) -> [[location(0)]] vec4<f32> {
 
     var c = 0.0;
     for (var i = 3.0; i >= 0.0; i = i - 1.0)   {
-        var vr = sm_vr(coords * pow(2.0, i), input.time/2.0);
+        var vr = sm_vr(coords * pow(2.0, i), input.time/2.0 + input.seed);
         vr = smoothStep(0.5, 1.5 , vr);
         c = mix(c, vr, 1.0 - smoothStep(0.4, 0.5, vr));
         c = (c + 0.325) * (1.0 - i * 0.1);
