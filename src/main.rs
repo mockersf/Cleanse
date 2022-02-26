@@ -2,11 +2,11 @@
 
 #[cfg(feature = "hot")]
 use bevy::asset::AssetServerSettings;
+use bevy::{app::AppExit, prelude::*};
+#[cfg(not(feature = "release"))]
 use bevy::{
-    app::AppExit,
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     log::{Level, LogSettings},
-    prelude::*,
     window::PresentMode,
 };
 
@@ -18,6 +18,8 @@ fn main() {
     let mut app = App::new();
     app.insert_resource(WindowDescriptor {
         title: "Cleanse".to_string(),
+        #[cfg(not(feature = "release"))]
+        present_mode: PresentMode::Immediate,
         resizable: false,
         ..Default::default()
     })
