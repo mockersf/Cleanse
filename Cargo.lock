@@ -1414,9 +1414,8 @@ dependencies = [
 
 [[package]]
 name = "cleanse"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
- "anyhow",
  "bevy 0.6.0 (git+https://github.com/bevyengine/bevy)",
  "bevy_asset_loader",
  "bevy_easings",
