@@ -7,8 +7,35 @@ publish = false
 
 
 [dependencies]
-bevy = "0.6"
+bevy = { version = "0.6", default-features = false, features = [
+  "bevy_core_pipeline",
+  "bevy_sprite",
+  "bevy_winit",
+  "bevy_render",
+  "bevy_text",
+  "png"
+] }
+
+bevy_embedded_assets = { version = "0.2", optional = true }
+# Needed to control log level by feature for release
+tracing = { version = "0.1", optional = true }
+
+rand = "0.8"
 
 [features]
 default = []
-release = []
+hot = [ "bevy/filesystem_watcher" ]
+release = [ "bundled", "tracing/release_max_level_warn" ]
+bundled = [ "bevy_embedded_assets" ]
+trace = [ "bevy/trace", "bevy/trace_tracy" ]
+
+
+[patch.crates-io]
+bevy = { git = "https://github.com/bevyengine/bevy" }
+
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+strip = true
