@@ -10,8 +10,12 @@ use bevy::{
     window::PresentMode,
 };
 
+use bevy_egui::EguiPlugin;
+
+mod assets;
 mod bloodfield;
 mod camera;
+mod menu;
 mod splash;
 
 fn main() {
@@ -55,10 +59,13 @@ fn main() {
             ]));
     }
     app.add_plugin(camera::CameraPlugin)
+        .add_plugin(EguiPlugin)
         .add_system_set(SystemSet::on_enter(GameState::Exit).with_system(exit))
         .add_state(GameState::Splash)
+        .add_plugin(assets::AssetPlugin)
         .add_plugin(splash::SplashPlugin)
         .add_plugin(bloodfield::BloodfieldPlugin)
+        .add_plugin(menu::MenuPlugin)
         .run();
 }
 
