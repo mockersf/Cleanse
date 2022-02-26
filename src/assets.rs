@@ -14,8 +14,7 @@ impl Plugin for AssetPlugin {
 }
 
 #[derive(AssetCollection)]
-struct RawAssets {
-}
+struct RawAssets {}
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 pub enum LoadingState {
