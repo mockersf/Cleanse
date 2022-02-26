@@ -15,6 +15,7 @@ use bevy_egui::EguiPlugin;
 mod assets;
 mod bloodfield;
 mod camera;
+mod game;
 mod menu;
 mod splash;
 
@@ -66,6 +67,7 @@ fn main() {
         .add_plugin(splash::SplashPlugin)
         .add_plugin(bloodfield::BloodfieldPlugin)
         .add_plugin(menu::MenuPlugin)
+        .add_plugin(game::GamePlugin)
         .run();
 }
 

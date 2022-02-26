@@ -17,7 +17,7 @@ use bevy::{
 };
 use rand::Rng;
 
-use crate::GameState;
+use crate::{game::z_layers, GameState};
 
 #[derive(Component)]
 struct ScreenTag;
@@ -53,7 +53,7 @@ fn setup(
             .spawn_bundle(MaterialMesh2dBundle {
                 mesh: meshes.add(Mesh::from(shape::Quad::default())).into(),
                 transform: Transform {
-                    translation: const_vec3!([0.0, 0.0, 0.0]),
+                    translation: const_vec3!([0.0, 0.0, z_layers::BLOODFIELD]),
                     scale: resolution.extend(1.0),
                     ..Default::default()
                 },
@@ -86,7 +86,10 @@ fn update_bloodfield_material(
         let camera_transform = camera.single();
         bloodfield_material.time += time.delta_seconds();
         let mut field_transform = bloodfield.single_mut();
-        field_transform.translation = camera_transform.translation.truncate().extend(0.0);
+        field_transform.translation = camera_transform
+            .translation
+            .truncate()
+            .extend(z_layers::BLOODFIELD);
     }
 }
 
