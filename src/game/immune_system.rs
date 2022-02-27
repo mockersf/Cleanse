@@ -21,9 +21,10 @@ pub fn setup(mut commands: Commands) {
         })
         .insert_bundle(RigidBodyBundle {
             position: Vec2::new(0.0, 0.0).into(),
+            mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
             damping: RigidBodyDamping {
                 linear_damping: 10.0,
-                angular_damping: 1.0,
+                angular_damping: 10.0,
             }
             .into(),
             ..Default::default()
@@ -60,21 +61,22 @@ pub fn movements(
     if keyboard_input.pressed(KeyCode::Down) {
         order.y -= 1.0;
     }
+
+    let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
     if order != Vec2::ZERO {
-        let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
         let move_by = order.normalize() * time.delta_seconds() * immune_system.speed * 100000.0;
-        let window = windows.get_primary().unwrap();
-        let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         rb_forces.force = move_by.into();
-        rb_position.position.translation.x = rb_position
-            .position
-            .translation
-            .x
-            .clamp(-width / 2.0, width / 2.0);
-        rb_position.position.translation.y = rb_position
-            .position
-            .translation
-            .y
-            .clamp(-height / 2.0, height / 2.0 * 0.925);
     }
+    let window = windows.get_primary().unwrap();
+    let (width, height) = (window.width() * 0.985, window.height() * 0.975);
+    rb_position.position.translation.x = rb_position
+        .position
+        .translation
+        .x
+        .clamp(-width / 2.0, width / 2.0);
+    rb_position.position.translation.y = rb_position
+        .position
+        .translation
+        .y
+        .clamp(-height / 2.0, height / 2.0 * 0.925);
 }

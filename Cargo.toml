@@ -47,6 +47,8 @@ bevy_easings = { git = "https://github.com/vleue/bevy_easings", branch = "add-as
 bevy_egui = { git = "https://github.com/mockersf/bevy_egui", branch = "bevy-main" }
 bevy_prototype_lyon = { git = "https://github.com/mockersf/bevy_prototype_lyon", branch = "bevy-main" }
 bevy_rapier2d = { git = "https://github.com/mockersf/bevy_rapier", branch = "bevy-main" }
+# needed for https://github.com/dimforge/rapier/pull/284
+rapier2d = { git = "https://github.com/dimforge/rapier" }
 
 
 [profile.dev.package."*"]

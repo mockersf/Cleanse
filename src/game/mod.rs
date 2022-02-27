@@ -30,7 +30,8 @@ impl Plugin for GamePlugin {
                 .with_system(immune_system::movements)
                 .with_system(host::aging)
                 .with_system(host::is_sick)
-                .with_system(pathogens::under_attack)
+                .with_system(pathogens::spawn)
+                .with_system(pathogens::movements)
                 .with_system(ui::status),
         );
     }

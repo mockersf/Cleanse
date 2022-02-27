@@ -2,24 +2,21 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
-use super::{host::HostState, z_layers, ScreenTag};
+use super::{host::HostState, immune_system::ImmuneSystem, z_layers, ScreenTag};
 
 #[derive(Component)]
-pub struct Bacteria {
-    speed: f32,
-}
+pub struct Bacteria;
 
 #[derive(Component)]
-pub struct Virus {
-    speed: f32,
-}
+pub struct Virus;
 
 #[derive(Component)]
 pub struct Pathogen {
     pub strength: f32,
+    speed: f32,
 }
 
-pub fn under_attack(
+pub fn spawn(
     mut commands: Commands,
     state: Res<HostState>,
     time: Res<Time>,
@@ -45,6 +42,12 @@ pub fn under_attack(
             })
             .insert_bundle(RigidBodyBundle {
                 position: position.into(),
+                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
+                damping: RigidBodyDamping {
+                    linear_damping: 10.0,
+                    angular_damping: 1.0,
+                }
+                .into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
@@ -53,8 +56,11 @@ pub fn under_attack(
             })
             .insert(RigidBodyPositionSync::Discrete)
             .insert_bundle((
-                Bacteria { speed: 100.0 },
-                Pathogen { strength: 1.0 },
+                Bacteria,
+                Pathogen {
+                    speed: 50.0,
+                    strength: 10.0,
+                },
                 ScreenTag,
             ));
     }
@@ -77,6 +83,12 @@ pub fn under_attack(
             })
             .insert_bundle(RigidBodyBundle {
                 position: position.into(),
+                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
+                damping: RigidBodyDamping {
+                    linear_damping: 10.0,
+                    angular_damping: 10.0,
+                }
+                .into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
@@ -85,9 +97,30 @@ pub fn under_attack(
             })
             .insert(RigidBodyPositionSync::Discrete)
             .insert_bundle((
-                Bacteria { speed: 200.0 },
-                Pathogen { strength: 2.0 },
+                Bacteria,
+                Pathogen {
+                    speed: 75.0,
+                    strength: 2.0,
+                },
                 ScreenTag,
             ));
+    }
+}
+
+pub fn movements(
+    time: Res<Time>,
+    immune_system: Query<&Transform, With<ImmuneSystem>>,
+    mut pathogens: Query<(
+        &RigidBodyPositionComponent,
+        &mut RigidBodyForcesComponent,
+        &Pathogen,
+    )>,
+) {
+    let target = immune_system.single().translation.truncate();
+    for (rb_position, mut rb_forces, pathogen) in pathogens.iter_mut() {
+        let position: Vec2 = rb_position.position.translation.into();
+        let order = target - position;
+        let move_by = order.normalize() * time.delta_seconds() * pathogen.speed * 100000.0;
+        rb_forces.force = move_by.into();
     }
 }
