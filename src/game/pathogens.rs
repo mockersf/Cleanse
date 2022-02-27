@@ -15,6 +15,7 @@ pub struct Pathogen {
     pub strength: f32,
     speed: f32,
     last_hit: Timer,
+    in_contact: bool,
 }
 
 pub fn spawn(
@@ -61,7 +62,8 @@ pub fn spawn(
                 Pathogen {
                     speed: 50.0,
                     strength: 10.0,
-                    last_hit: Timer::from_seconds(1.0, false),
+                    last_hit: Timer::from_seconds(1.0, true),
+                    in_contact: false,
                 },
                 ScreenTag,
             ));
@@ -104,7 +106,8 @@ pub fn spawn(
                 Pathogen {
                     speed: 75.0,
                     strength: 2.0,
-                    last_hit: Timer::from_seconds(1.0, false),
+                    last_hit: Timer::from_seconds(1.0, true),
+                    in_contact: false,
                 },
                 ScreenTag,
             ));
@@ -132,36 +135,58 @@ pub fn movements(
 pub fn collisions(
     mut contact_events: EventReader<ContactEvent>,
     mut pathogens: Query<&mut Pathogen>,
-    mut immune_system: Query<&mut ImmuneSystem>,
+    immune_system: Query<&ImmuneSystem>,
 ) {
     for contact_event in contact_events.iter() {
         match contact_event {
             ContactEvent::Started(h1, h2) => {
                 let entity1 = h1.entity();
                 let entity2 = h2.entity();
-                let (mut is, mut pat) = {
-                    if let Ok(is) = immune_system.get_mut(entity1) {
-                        (is, pathogens.get_mut(entity2).unwrap())
+                let mut pat = {
+                    if immune_system.contains(entity1) {
+                        pathogens.get_mut(entity2).unwrap()
+                    } else if immune_system.contains(entity2) {
+                        pathogens.get_mut(entity1).unwrap()
                     } else {
-                        if let Ok(is) = immune_system.get_mut(entity2) {
-                            (is, pathogens.get_mut(entity1).unwrap())
-                        } else {
-                            continue;
-                        }
+                        continue;
                     }
                 };
+                pat.in_contact = true;
                 if pat.last_hit.finished() {
-                    is.health -= pat.strength;
                     pat.last_hit.reset();
+                    let d = pat.last_hit.duration();
+                    pat.last_hit.set_elapsed(d);
                 }
             }
-            _ => (),
+            ContactEvent::Stopped(h1, h2) => {
+                let entity1 = h1.entity();
+                let entity2 = h2.entity();
+                let mut pat = {
+                    if immune_system.contains(entity1) {
+                        pathogens.get_mut(entity2).unwrap()
+                    } else if immune_system.contains(entity2) {
+                        pathogens.get_mut(entity1).unwrap()
+                    } else {
+                        continue;
+                    }
+                };
+                pat.in_contact = false;
+            }
         };
     }
 }
 
-pub fn refresh_hit(mut pathogens: Query<&mut Pathogen>, time: Res<Time>) {
+pub fn refresh_hit(
+    mut pathogens: Query<&mut Pathogen>,
+    mut immune_system: Query<&mut ImmuneSystem>,
+    time: Res<Time>,
+) {
     for mut pathogen in pathogens.iter_mut() {
-        pathogen.last_hit.tick(time.delta());
+        if pathogen.last_hit.tick(time.delta()).just_finished() {
+            if pathogen.in_contact {
+                let mut immune_system = immune_system.single_mut();
+                immune_system.health -= pathogen.strength;
+            }
+        }
     }
 }
