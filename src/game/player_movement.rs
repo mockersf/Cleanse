@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use super::Player;
+use super::ImmuneSystem;
 
 pub fn player_movements(
     keyboard_input: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut player: Query<(&mut Transform, &Player)>,
+    mut player: Query<(&mut Transform, &ImmuneSystem)>,
     windows: Res<Windows>,
 ) {
     let mut order = Vec2::ZERO;

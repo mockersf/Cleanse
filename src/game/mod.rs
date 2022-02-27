@@ -2,8 +2,12 @@ use bevy::prelude::*;
 
 use crate::{tear_down, GameState};
 
+use self::host::{HostState, Status};
+
+mod host;
 mod player_movement;
 mod terrain;
+mod ui;
 
 pub struct GamePlugin;
 
@@ -17,7 +21,9 @@ impl Plugin for GamePlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(state_management)
-                    .with_system(player_movement::player_movements),
+                    .with_system(player_movement::player_movements)
+                    .with_system(host::aging)
+                    .with_system(ui::status),
             );
     }
 }
@@ -32,13 +38,13 @@ pub mod z_layers {
 struct ScreenTag;
 
 #[derive(Component)]
-pub struct Player {
+pub struct ImmuneSystem {
     speed: f32,
 }
 
 fn setup(
     mut commands: Commands,
-    mut camera: Query<&mut Transform, (With<Camera>, Without<Player>)>,
+    mut camera: Query<&mut Transform, (With<Camera>, Without<ImmuneSystem>)>,
 ) {
     commands
         .spawn_bundle(SpriteBundle {
@@ -50,13 +56,18 @@ fn setup(
             },
             ..Default::default()
         })
-        .insert(Player { speed: 100.0 })
+        .insert(ImmuneSystem { speed: 100.0 })
         .insert(ScreenTag);
 
     if let Ok(mut transform) = camera.get_single_mut() {
         transform.translation.x = 0.0;
         transform.translation.y = 0.0;
     }
+
+    commands.insert_resource(HostState {
+        age: 0.0,
+        status: Status::Healthy,
+    });
 }
 
 fn state_management(keyboard_input: Res<Input<KeyCode>>, mut state: ResMut<State<GameState>>) {

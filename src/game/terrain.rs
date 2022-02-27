@@ -19,7 +19,7 @@ use rand::Rng;
 
 use crate::{game::z_layers, tear_down, GameState};
 
-use super::Player;
+use super::ImmuneSystem;
 
 #[derive(Component)]
 struct ScreenTag;
@@ -81,7 +81,7 @@ fn update_terrain_material(
             Without<Handle<TerrainMaterial>>,
         ),
     >,
-    player: Query<&Player>,
+    player: Query<&ImmuneSystem>,
     time: Res<Time>,
     mut terrain_materials: ResMut<Assets<TerrainMaterial>>,
     mut terrain: Query<&mut Transform, With<Handle<TerrainMaterial>>>,
