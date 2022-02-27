@@ -1,13 +1,13 @@
 use bevy::prelude::*;
 use bevy_egui::{
     egui::{
-        self, Align2, Color32, FontData, FontDefinitions, FontFamily, RichText, Stroke, TextStyle,
-        Ui, Widget,
+        self, text::LayoutJob, Align2, Color32, FontData, FontDefinitions, FontFamily, RichText,
+        Stroke, TextFormat, TextStyle, Ui, Widget, WidgetText,
     },
     EguiContext,
 };
 
-use crate::{assets::LoadingState, tear_down, GameState};
+use crate::{assets::LoadingState, tear_down, GameState, GlobalState};
 
 pub struct MenuPlugin;
 
@@ -63,6 +63,7 @@ fn menu(
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<GameState>>,
     asset_state: Res<State<LoadingState>>,
+    global_state: Res<GlobalState>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -74,9 +75,23 @@ fn menu(
                 ui.separator();
                 ui.vertical_centered_justified(|ui| {
                     ui.set_max_width(350.0);
+                    let mut new_game = LayoutJob::default();
+                    new_game.append(
+                        "New Game",
+                        0.0,
+                        TextFormat::simple(egui::TextStyle::Button, Color32::WHITE),
+                    );
+                    if global_state.generation > 0 {
+                        new_game.append(
+                            &format!("\ngeneration {}", global_state.generation),
+                            0.0,
+                            TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
+                        );
+                    }
+
                     button(
                         ui,
-                        "New Game",
+                        new_game,
                         || {
                             let _ = state.set(GameState::Playing);
                         },
@@ -97,7 +112,7 @@ fn menu(
         });
 }
 
-fn button(ui: &mut Ui, text: &str, mut on_click: impl FnMut(), is_enabled: bool) {
+fn button(ui: &mut Ui, text: impl Into<WidgetText>, mut on_click: impl FnMut(), is_enabled: bool) {
     ui.scope(|ui| {
         if !is_enabled {
             ui.set_enabled(false);

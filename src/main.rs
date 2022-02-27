@@ -76,6 +76,7 @@ fn main() {
         .add_plugin(menu::MenuPlugin)
         .add_plugin(game::GamePlugin)
         .add_plugin(death::DeathPlugin)
+        .insert_resource(GlobalState { generation: 0 })
         .run();
 }
 
@@ -98,4 +99,8 @@ pub fn tear_down<Tag: Component>(mut commands: Commands, query: Query<Entity, Wi
 
 fn exit(mut app_exit_events: EventWriter<AppExit>) {
     app_exit_events.send(AppExit);
+}
+
+pub struct GlobalState {
+    pub generation: usize,
 }

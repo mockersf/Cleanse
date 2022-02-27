@@ -6,7 +6,7 @@ use bevy_egui::{
 
 use crate::{
     game::{self, HostState},
-    tear_down, GameState,
+    tear_down, GameState, GlobalState,
 };
 
 pub struct DeathPlugin;
@@ -34,6 +34,7 @@ fn menu(
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<GameState>>,
     host_state: Res<HostState>,
+    mut global_state: ResMut<GlobalState>,
 ) {
     egui::Window::new(RichText::new("Death").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -53,6 +54,7 @@ fn menu(
                         ui,
                         "Try Again...",
                         || {
+                            global_state.generation += 1;
                             let _ = state.set(GameState::Menu);
                         },
                         true,

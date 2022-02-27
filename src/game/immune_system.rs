@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+use crate::GlobalState;
+
 use super::{z_layers, ScreenTag};
 
 #[derive(Component)]
@@ -9,7 +11,7 @@ pub struct ImmuneSystem {
     pub health: f32,
 }
 
-pub fn setup(mut commands: Commands) {
+pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     commands
         .spawn_bundle(SpriteBundle {
             transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
@@ -37,8 +39,8 @@ pub fn setup(mut commands: Commands) {
         })
         .insert(RigidBodyPositionSync::Discrete)
         .insert(ImmuneSystem {
-            speed: 100.0,
-            health: 10.0,
+            speed: 100.0 + 10.0 * global_state.generation as f32,
+            health: 10.0 + global_state.generation as f32,
         })
         .insert(ScreenTag);
 }
