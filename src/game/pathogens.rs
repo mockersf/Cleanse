@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
 use super::{host::HostState, z_layers, ScreenTag};
@@ -28,20 +29,29 @@ pub fn under_attack(
     if rng.gen_bool((state.risks.bacteria * time.delta_seconds()) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
+        let position = Vec2::new(
+            rng.gen_range((-width / 2.0)..(width / 2.0)),
+            rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
+        );
         commands
             .spawn_bundle(SpriteBundle {
-                transform: Transform::from_xyz(
-                    rng.gen_range((-width / 2.0)..(width / 2.0)),
-                    rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
-                    z_layers::PATHOGEN,
-                ),
+                transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
                     color: Color::GREEN,
-                    custom_size: Some(Vec2::new(10.0, 10.0)),
+                    custom_size: Some(Vec2::new(16.0, 16.0)),
                     ..Default::default()
                 },
                 ..Default::default()
             })
+            .insert_bundle(RigidBodyBundle {
+                position: position.into(),
+                ..Default::default()
+            })
+            .insert_bundle(ColliderBundle {
+                shape: ColliderShape::cuboid(8.0, 8.0).into(),
+                ..Default::default()
+            })
+            .insert(RigidBodyPositionSync::Discrete)
             .insert_bundle((
                 Bacteria { speed: 100.0 },
                 Pathogen { strength: 1.0 },
@@ -51,13 +61,13 @@ pub fn under_attack(
     if rng.gen_bool((state.risks.virus * time.delta_seconds()) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
+        let position = Vec2::new(
+            rng.gen_range((-width / 2.0)..(width / 2.0)),
+            rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
+        );
         commands
             .spawn_bundle(SpriteBundle {
-                transform: Transform::from_xyz(
-                    rng.gen_range((-width / 2.0)..(width / 2.0)),
-                    rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
-                    z_layers::PATHOGEN,
-                ),
+                transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
                     color: Color::RED,
                     custom_size: Some(Vec2::new(10.0, 10.0)),
@@ -65,6 +75,15 @@ pub fn under_attack(
                 },
                 ..Default::default()
             })
+            .insert_bundle(RigidBodyBundle {
+                position: position.into(),
+                ..Default::default()
+            })
+            .insert_bundle(ColliderBundle {
+                shape: ColliderShape::cuboid(5.0, 5.0).into(),
+                ..Default::default()
+            })
+            .insert(RigidBodyPositionSync::Discrete)
             .insert_bundle((
                 Bacteria { speed: 200.0 },
                 Pathogen { strength: 2.0 },

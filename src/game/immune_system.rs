@@ -29,12 +29,7 @@ pub fn setup(mut commands: Commands) {
             ..Default::default()
         })
         .insert_bundle(ColliderBundle {
-            shape: ColliderShape::ball(0.5).into(),
-            material: ColliderMaterial {
-                restitution: 0.7,
-                ..Default::default()
-            }
-            .into(),
+            shape: ColliderShape::cuboid(5.0, 5.0).into(),
             ..Default::default()
         })
         .insert(RigidBodyPositionSync::Discrete)
@@ -67,7 +62,7 @@ pub fn movements(
     }
     if order != Vec2::ZERO {
         let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
-        let move_by = order.normalize() * time.delta_seconds() * immune_system.speed * 1000.0;
+        let move_by = order.normalize() * time.delta_seconds() * immune_system.speed * 100000.0;
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         rb_forces.force = move_by.into();
