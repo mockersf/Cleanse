@@ -87,7 +87,7 @@ fn update_tissue_material(
     mut tissue: Query<&mut Transform, With<Handle<TissueMaterial>>>,
     host: Res<HostState>,
 ) {
-    for (_id, mut tissue_material) in tissue_materials.iter_mut() {
+    for (_, mut tissue_material) in tissue_materials.iter_mut() {
         let camera_transform = camera.single();
         let camera_pos = camera_transform.translation.truncate();
         tissue_material.time += time.delta_seconds();
