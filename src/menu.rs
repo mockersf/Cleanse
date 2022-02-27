@@ -89,7 +89,7 @@ fn menu(
                         || {
                             let _ = state.set(GameState::Exit);
                         },
-                        true,
+                        cfg!(not(target_arch = "wasm32")),
                     );
                     ui.add_space(10.0);
                 });
