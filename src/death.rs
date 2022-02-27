@@ -44,7 +44,9 @@ fn menu(
             ui.vertical_centered(|ui| {
                 ui.separator();
                 ui.heading(format!("You died at age {:>2.1}", host_state.age));
+                ui.add_space(10.0);
                 ui.heading("That was inevitable.");
+                ui.add_space(30.0);
                 ui.vertical_centered_justified(|ui| {
                     ui.set_max_width(350.0);
                     button(
