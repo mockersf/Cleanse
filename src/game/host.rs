@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::pathogens::Pathogen;
+use super::{immune_system::ImmuneSystem, pathogens::Pathogen};
 
 pub enum Status {
     Healthy,
@@ -34,7 +34,11 @@ pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {
     state.age += time.delta_seconds();
 }
 
-pub fn is_sick(mut state: ResMut<HostState>, pathogens: Query<&Pathogen>) {
+pub fn state_update(
+    mut state: ResMut<HostState>,
+    pathogens: Query<&Pathogen>,
+    immune_system: Query<&ImmuneSystem>,
+) {
     let pathogen_level: f32 = pathogens.iter().map(|p| p.strength).sum();
     if pathogen_level > 10.0 {
         state.status = Status::Sick
@@ -42,4 +46,9 @@ pub fn is_sick(mut state: ResMut<HostState>, pathogens: Query<&Pathogen>) {
         state.status = Status::Healthy
     }
     state.sickness = (pathogens.iter().len() as f32 / 50.0).min(1.0);
+
+    let immune_system = immune_system.single();
+    if immune_system.health < 0.0 {
+        state.status = Status::Dead;
+    }
 }

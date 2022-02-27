@@ -14,6 +14,7 @@ pub struct Virus;
 pub struct Pathogen {
     pub strength: f32,
     speed: f32,
+    last_hit: Timer,
 }
 
 pub fn spawn(
@@ -60,6 +61,7 @@ pub fn spawn(
                 Pathogen {
                     speed: 50.0,
                     strength: 10.0,
+                    last_hit: Timer::from_seconds(1.0, false),
                 },
                 ScreenTag,
             ));
@@ -93,6 +95,7 @@ pub fn spawn(
             })
             .insert_bundle(ColliderBundle {
                 shape: ColliderShape::cuboid(5.0, 5.0).into(),
+                flags: ActiveEvents::CONTACT_EVENTS.into(),
                 ..Default::default()
             })
             .insert(RigidBodyPositionSync::Discrete)
@@ -101,6 +104,7 @@ pub fn spawn(
                 Pathogen {
                     speed: 75.0,
                     strength: 2.0,
+                    last_hit: Timer::from_seconds(1.0, false),
                 },
                 ScreenTag,
             ));
@@ -122,5 +126,42 @@ pub fn movements(
         let order = target - position;
         let move_by = order.normalize() * time.delta_seconds() * pathogen.speed * 100000.0;
         rb_forces.force = move_by.into();
+    }
+}
+
+pub fn collisions(
+    mut contact_events: EventReader<ContactEvent>,
+    mut pathogens: Query<&mut Pathogen>,
+    mut immune_system: Query<&mut ImmuneSystem>,
+) {
+    for contact_event in contact_events.iter() {
+        match contact_event {
+            ContactEvent::Started(h1, h2) => {
+                let entity1 = h1.entity();
+                let entity2 = h2.entity();
+                let (mut is, mut pat) = {
+                    if let Ok(is) = immune_system.get_mut(entity1) {
+                        (is, pathogens.get_mut(entity2).unwrap())
+                    } else {
+                        if let Ok(is) = immune_system.get_mut(entity2) {
+                            (is, pathogens.get_mut(entity1).unwrap())
+                        } else {
+                            continue;
+                        }
+                    }
+                };
+                if pat.last_hit.finished() {
+                    is.health -= pat.strength;
+                    pat.last_hit.reset();
+                }
+            }
+            _ => (),
+        };
+    }
+}
+
+pub fn refresh_hit(mut pathogens: Query<&mut Pathogen>, time: Res<Time>) {
+    for mut pathogen in pathogens.iter_mut() {
+        pathogen.last_hit.tick(time.delta());
     }
 }

@@ -6,6 +6,7 @@ use super::{z_layers, ScreenTag};
 #[derive(Component)]
 pub struct ImmuneSystem {
     pub speed: f32,
+    pub health: f32,
 }
 
 pub fn setup(mut commands: Commands) {
@@ -31,10 +32,14 @@ pub fn setup(mut commands: Commands) {
         })
         .insert_bundle(ColliderBundle {
             shape: ColliderShape::cuboid(5.0, 5.0).into(),
+            flags: ActiveEvents::CONTACT_EVENTS.into(),
             ..Default::default()
         })
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(ImmuneSystem { speed: 100.0 })
+        .insert(ImmuneSystem {
+            speed: 100.0,
+            health: 10.0,
+        })
         .insert(ScreenTag);
 }
 
