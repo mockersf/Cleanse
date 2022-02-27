@@ -27,6 +27,7 @@ pub struct HostState {
     pub age: f32,
     pub status: Status,
     pub risks: Risks,
+    pub sickness: f32,
 }
 
 pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {
@@ -40,4 +41,5 @@ pub fn is_sick(mut state: ResMut<HostState>, pathogens: Query<&Pathogen>) {
     } else {
         state.status = Status::Healthy
     }
+    state.sickness = (pathogens.iter().len() as f32 / 50.0).min(1.0);
 }

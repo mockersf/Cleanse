@@ -63,6 +63,7 @@ fn setup(
             bacteria: 1.0,
             virus: 1.0,
         },
+        sickness: 0.0,
     });
 }
 

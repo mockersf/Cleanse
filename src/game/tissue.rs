@@ -19,7 +19,7 @@ use rand::Rng;
 
 use crate::{game::z_layers, tear_down, GameState};
 
-use super::ImmuneSystem;
+use super::{host::HostState, ImmuneSystem};
 
 #[derive(Component)]
 struct ScreenTag;
@@ -85,6 +85,7 @@ fn update_tissue_material(
     time: Res<Time>,
     mut tissue_materials: ResMut<Assets<TissueMaterial>>,
     mut tissue: Query<&mut Transform, With<Handle<TissueMaterial>>>,
+    host: Res<HostState>,
 ) {
     for (_id, mut tissue_material) in tissue_materials.iter_mut() {
         let camera_transform = camera.single();
@@ -92,6 +93,7 @@ fn update_tissue_material(
         tissue_material.time += time.delta_seconds();
         tissue_material.pos = camera_pos * Vec2::new(1.0, -1.0);
         tissue_material.speed = immune_system.single().speed;
+        tissue_material.sickness = host.sickness;
         let mut field_transform = tissue.single_mut();
         field_transform.translation = camera_pos.extend(z_layers::TISSUE);
     }
