@@ -3,6 +3,8 @@ use bevy::prelude::*;
 use crate::{tear_down, GameState};
 
 mod player_movement;
+mod terrain;
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -11,17 +13,18 @@ impl Plugin for GamePlugin {
             .add_system_set(
                 SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>),
             )
+            .add_plugin(terrain::TerrainPlugin)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(state_management)
-                    .with_system(player_movement::player_movements)
-                    .with_system(player_movement::camera_follow_player),
+                    .with_system(player_movement::player_movements),
             );
     }
 }
 
 pub mod z_layers {
     pub const BLOODFIELD: f32 = 0.0;
+    pub const TERRAIN: f32 = 1.0;
     pub const PLAYER: f32 = 2.0;
 }
 
@@ -29,7 +32,9 @@ pub mod z_layers {
 struct ScreenTag;
 
 #[derive(Component)]
-pub struct Player;
+pub struct Player {
+    speed: f32,
+}
 
 fn setup(
     mut commands: Commands,
@@ -45,7 +50,7 @@ fn setup(
             },
             ..Default::default()
         })
-        .insert(Player)
+        .insert(Player { speed: 100.0 })
         .insert(ScreenTag);
 
     if let Ok(mut transform) = camera.get_single_mut() {
