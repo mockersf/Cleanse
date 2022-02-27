@@ -81,7 +81,7 @@ fn update_terrain_material(
             Without<Handle<TerrainMaterial>>,
         ),
     >,
-    player: Query<&ImmuneSystem>,
+    immune_system: Query<&ImmuneSystem>,
     time: Res<Time>,
     mut terrain_materials: ResMut<Assets<TerrainMaterial>>,
     mut terrain: Query<&mut Transform, With<Handle<TerrainMaterial>>>,
@@ -91,7 +91,7 @@ fn update_terrain_material(
         let camera_pos = camera_transform.translation.truncate();
         terrain_material.time += time.delta_seconds();
         terrain_material.pos = camera_pos * Vec2::new(1.0, -1.0);
-        terrain_material.speed = player.single().speed;
+        terrain_material.speed = immune_system.single().speed;
         let mut field_transform = terrain.single_mut();
         field_transform.translation = camera_pos.extend(z_layers::TERRAIN);
     }

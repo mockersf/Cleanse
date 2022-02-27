@@ -11,6 +11,7 @@ use bevy::{
 };
 
 use bevy_egui::EguiPlugin;
+use bevy_rapier2d::physics::{NoUserData, RapierConfiguration, RapierPhysicsPlugin};
 
 mod assets;
 mod bloodfield;
@@ -60,6 +61,11 @@ fn main() {
             ]));
     }
     app.add_plugin(EguiPlugin)
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+        .insert_resource(RapierConfiguration {
+            gravity: Vec2::new(0., 0.).into(),
+            ..Default::default()
+        })
         .add_system_set(SystemSet::on_enter(GameState::Exit).with_system(exit))
         .add_state(GameState::Splash)
         .add_plugin(assets::AssetPlugin)
