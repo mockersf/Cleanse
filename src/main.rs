@@ -16,6 +16,7 @@ use bevy_rapier2d::physics::{NoUserData, RapierConfiguration, RapierPhysicsPlugi
 mod assets;
 mod bloodfield;
 mod camera;
+mod death;
 mod game;
 mod menu;
 mod splash;
@@ -74,6 +75,7 @@ fn main() {
         .add_plugin(bloodfield::BloodfieldPlugin)
         .add_plugin(menu::MenuPlugin)
         .add_plugin(game::GamePlugin)
+        .add_plugin(death::DeathPlugin)
         .run();
 }
 
@@ -82,6 +84,7 @@ pub enum GameState {
     Splash,
     Menu,
     Playing,
+    Dead,
     Exit,
 }
 

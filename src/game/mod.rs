@@ -2,16 +2,17 @@ use bevy::prelude::*;
 
 use crate::{tear_down, GameState};
 
+pub use self::host::HostState;
 use self::{
-    host::{HostState, Risks, Status},
+    host::{Risks, Status},
     immune_system::ImmuneSystem,
 };
 
 mod host;
 mod immune_system;
 mod pathogens;
-mod tissue;
-mod ui;
+pub mod tissue;
+pub mod ui;
 
 pub struct GamePlugin;
 
@@ -47,7 +48,7 @@ pub mod z_layers {
 }
 
 #[derive(Component)]
-struct ScreenTag;
+pub struct ScreenTag;
 
 fn setup(
     mut commands: Commands,

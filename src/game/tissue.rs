@@ -22,7 +22,7 @@ use crate::{game::z_layers, tear_down, GameState};
 use super::{host::HostState, ImmuneSystem};
 
 #[derive(Component)]
-struct ScreenTag;
+pub struct ScreenTag;
 
 pub struct TissuePlugin;
 impl Plugin for TissuePlugin {
