@@ -69,7 +69,13 @@ pub fn movements(
 
     let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
     if order != Vec2::ZERO {
-        let move_by = order.normalize() * time.delta_seconds() * immune_system.speed * 100000.0;
+        let position: Vec2 = rb_position.position.translation.into();
+        let distance_to_zero = (position.distance(Vec2::ZERO) - 100.0).max(0.0);
+        let move_by = order.normalize()
+            * time.delta_seconds()
+            * immune_system.speed
+            * (1.0 - distance_to_zero / 750.0)
+            * 100000.0;
         rb_forces.force = move_by.into();
     }
     let window = windows.get_primary().unwrap();
