@@ -1,6 +1,3 @@
-// This shader is inspired by Start Nest by Pablo Roman Andrioli:
-// https://www.shadertoy.com/view/XlfGRj
-
 #import bevy_sprite::mesh2d_view_bind_group
 #import bevy_sprite::mesh2d_struct
 
@@ -66,7 +63,7 @@ fn sm_vr(st: vec2<f32>, time: f32) -> f32 {
 
 [[stage(fragment)]]
 fn fragment(in: VertexOutput) -> [[location(0)]] vec4<f32> {
-    var coords = in.uv.xy * 20.0 + input.pos / 200.0;
+    let coords = in.uv.xy * 20.0 + input.pos / 200.0;
 
     var c = 0.0;
     for (var i = 3.0; i >= 0.0; i = i - 1.0)   {
