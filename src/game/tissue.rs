@@ -24,16 +24,16 @@ use super::ImmuneSystem;
 #[derive(Component)]
 struct ScreenTag;
 
-pub struct TerrainPlugin;
-impl Plugin for TerrainPlugin {
+pub struct TissuePlugin;
+impl Plugin for TissuePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(Material2dPlugin::<TerrainMaterial>::default())
+        app.add_plugin(Material2dPlugin::<TissueMaterial>::default())
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup))
             .add_system_set(
                 SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>),
             )
             .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(update_terrain_material),
+                SystemSet::on_update(GameState::Playing).with_system(update_tissue_material),
             );
     }
 }
@@ -41,10 +41,10 @@ impl Plugin for TerrainPlugin {
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<TerrainMaterial>>,
+    mut materials: ResMut<Assets<TissueMaterial>>,
     windows: Res<Windows>,
 ) {
-    debug!("Loading Terrain");
+    debug!("Loading Tissue");
 
     let window = windows.get_primary().unwrap();
     let resolution = Vec2::new(window.width(), window.height());
@@ -53,11 +53,11 @@ fn setup(
         .spawn_bundle(MaterialMesh2dBundle {
             mesh: meshes.add(Mesh::from(shape::Quad::default())).into(),
             transform: Transform {
-                translation: const_vec3!([0.0, 0.0, z_layers::TERRAIN]),
+                translation: const_vec3!([0.0, 0.0, z_layers::TISSUE]),
                 scale: resolution.extend(1.0),
                 ..Default::default()
             },
-            material: materials.add(TerrainMaterial {
+            material: materials.add(TissueMaterial {
                 resolution,
                 time: 0.0,
                 seed: rand::thread_rng().gen::<i16>() as f32,
@@ -72,34 +72,34 @@ fn setup(
 }
 
 #[allow(clippy::type_complexity)]
-fn update_terrain_material(
+fn update_tissue_material(
     camera: Query<
         &Transform,
         (
             With<OrthographicProjection>,
             With<Camera>,
-            Without<Handle<TerrainMaterial>>,
+            Without<Handle<TissueMaterial>>,
         ),
     >,
     immune_system: Query<&ImmuneSystem>,
     time: Res<Time>,
-    mut terrain_materials: ResMut<Assets<TerrainMaterial>>,
-    mut terrain: Query<&mut Transform, With<Handle<TerrainMaterial>>>,
+    mut tissue_materials: ResMut<Assets<TissueMaterial>>,
+    mut tissue: Query<&mut Transform, With<Handle<TissueMaterial>>>,
 ) {
-    for (_id, mut terrain_material) in terrain_materials.iter_mut() {
+    for (_id, mut tissue_material) in tissue_materials.iter_mut() {
         let camera_transform = camera.single();
         let camera_pos = camera_transform.translation.truncate();
-        terrain_material.time += time.delta_seconds();
-        terrain_material.pos = camera_pos * Vec2::new(1.0, -1.0);
-        terrain_material.speed = immune_system.single().speed;
-        let mut field_transform = terrain.single_mut();
-        field_transform.translation = camera_pos.extend(z_layers::TERRAIN);
+        tissue_material.time += time.delta_seconds();
+        tissue_material.pos = camera_pos * Vec2::new(1.0, -1.0);
+        tissue_material.speed = immune_system.single().speed;
+        let mut field_transform = tissue.single_mut();
+        field_transform.translation = camera_pos.extend(z_layers::TISSUE);
     }
 }
 
 #[derive(Component, Debug, Clone, TypeUuid, Default, AsStd140)]
 #[uuid = "754DDD8C-641C-48F2-A330-596F22A8AB57"]
-struct TerrainMaterial {
+struct TissueMaterial {
     resolution: Vec2,
     pos: Vec2,
     time: f32,
@@ -110,13 +110,13 @@ struct TerrainMaterial {
 }
 
 #[derive(Clone)]
-struct GpuTerrainMaterial {
+struct GpuTissueMaterial {
     bind_group: BindGroup,
 }
 
-impl RenderAsset for TerrainMaterial {
-    type ExtractedAsset = TerrainMaterial;
-    type PreparedAsset = GpuTerrainMaterial;
+impl RenderAsset for TissueMaterial {
+    type ExtractedAsset = TissueMaterial;
+    type PreparedAsset = GpuTissueMaterial;
     type Param = (SRes<RenderDevice>, SRes<Material2dPipeline<Self>>);
     fn extract_asset(&self) -> Self::ExtractedAsset {
         self.clone()
@@ -128,7 +128,7 @@ impl RenderAsset for TerrainMaterial {
     ) -> Result<Self::PreparedAsset, PrepareAssetError<Self::ExtractedAsset>> {
         let buffer = render_device.create_buffer_with_data(&BufferInitDescriptor {
             contents: extracted_asset.as_std140().as_bytes(),
-            label: Some("Terrain Settings Buffer"),
+            label: Some("Tissue Settings Buffer"),
             usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
         });
         let bind_group = render_device.create_bind_group(&BindGroupDescriptor {
@@ -136,20 +136,20 @@ impl RenderAsset for TerrainMaterial {
                 binding: 0,
                 resource: buffer.as_entire_binding(),
             }],
-            label: Some("Terrain BindGroup"),
+            label: Some("Tissue BindGroup"),
             layout: &material_pipeline.material2d_layout,
         });
 
-        Ok(GpuTerrainMaterial { bind_group })
+        Ok(GpuTissueMaterial { bind_group })
     }
 }
 
-impl Material2d for TerrainMaterial {
+impl Material2d for TissueMaterial {
     fn vertex_shader(asset_server: &AssetServer) -> Option<Handle<Shader>> {
-        Some(asset_server.load("shaders/terrain.wgsl"))
+        Some(asset_server.load("shaders/tissue.wgsl"))
     }
     fn fragment_shader(asset_server: &AssetServer) -> Option<Handle<Shader>> {
-        Some(asset_server.load("shaders/terrain.wgsl"))
+        Some(asset_server.load("shaders/tissue.wgsl"))
     }
 
     fn bind_group(render_asset: &<Self as RenderAsset>::PreparedAsset) -> &BindGroup {
@@ -164,11 +164,11 @@ impl Material2d for TerrainMaterial {
                 ty: BindingType::Buffer {
                     ty: BufferBindingType::Uniform,
                     has_dynamic_offset: false,
-                    min_binding_size: BufferSize::new(TerrainMaterial::std140_size_static() as u64),
+                    min_binding_size: BufferSize::new(TissueMaterial::std140_size_static() as u64),
                 },
                 count: None,
             }],
-            label: Some("Terrain BindGroup Layout"),
+            label: Some("Tissue BindGroup Layout"),
         })
     }
 }

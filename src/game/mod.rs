@@ -10,7 +10,7 @@ use self::{
 mod host;
 mod immune_system;
 mod pathogens;
-mod terrain;
+mod tissue;
 mod ui;
 
 pub struct GamePlugin;
@@ -23,7 +23,7 @@ impl Plugin for GamePlugin {
                 .with_system(immune_system::setup),
         )
         .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>))
-        .add_plugin(terrain::TerrainPlugin)
+        .add_plugin(tissue::TissuePlugin)
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(state_management)
@@ -39,7 +39,7 @@ impl Plugin for GamePlugin {
 
 pub mod z_layers {
     pub const BLOODFIELD: f32 = 0.0;
-    pub const TERRAIN: f32 = 1.0;
+    pub const TISSUE: f32 = 1.0;
     pub const IMMUNE_SYSTEM: f32 = 2.0;
     pub const PATHOGEN: f32 = 3.0;
 }
