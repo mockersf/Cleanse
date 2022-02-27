@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use super::pathogens::Pathogen;
+
 pub enum Status {
     Healthy,
     Sick,
@@ -16,11 +18,26 @@ impl std::fmt::Display for Status {
     }
 }
 
+pub struct Risks {
+    pub bacteria: f32,
+    pub virus: f32,
+}
+
 pub struct HostState {
     pub age: f32,
     pub status: Status,
+    pub risks: Risks,
 }
 
 pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {
     state.age += time.delta_seconds();
+}
+
+pub fn is_sick(mut state: ResMut<HostState>, pathogens: Query<&Pathogen>) {
+    let pathogen_level: f32 = pathogens.iter().map(|p| p.strength).sum();
+    if pathogen_level > 10.0 {
+        state.status = Status::Sick
+    } else {
+        state.status = Status::Healthy
+    }
 }

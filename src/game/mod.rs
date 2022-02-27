@@ -2,9 +2,10 @@ use bevy::prelude::*;
 
 use crate::{tear_down, GameState};
 
-use self::host::{HostState, Status};
+use self::host::{HostState, Risks, Status};
 
 mod host;
+mod pathogens;
 mod player_movement;
 mod terrain;
 mod ui;
@@ -23,6 +24,8 @@ impl Plugin for GamePlugin {
                     .with_system(state_management)
                     .with_system(player_movement::player_movements)
                     .with_system(host::aging)
+                    .with_system(host::is_sick)
+                    .with_system(pathogens::under_attack)
                     .with_system(ui::status),
             );
     }
@@ -32,6 +35,7 @@ pub mod z_layers {
     pub const BLOODFIELD: f32 = 0.0;
     pub const TERRAIN: f32 = 1.0;
     pub const PLAYER: f32 = 2.0;
+    pub const PATHOGEN: f32 = 3.0;
 }
 
 #[derive(Component)]
@@ -67,6 +71,10 @@ fn setup(
     commands.insert_resource(HostState {
         age: 0.0,
         status: Status::Healthy,
+        risks: Risks {
+            bacteria: 1.0,
+            virus: 1.0,
+        },
     });
 }
 
