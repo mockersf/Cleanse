@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::GameState;
+use crate::{GameState, GlobalState};
 
 use super::{immune_system::ImmuneSystem, pathogens::Pathogen};
 
@@ -38,19 +38,20 @@ pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {
 
 pub fn state_update(
     mut host_state: ResMut<HostState>,
+    global_state: ResMut<GlobalState>,
     pathogens: Query<&Pathogen>,
     immune_system: Query<&ImmuneSystem>,
     mut state: ResMut<State<GameState>>,
 ) {
-    let pathogen_level: f32 = pathogens.iter().map(|p| p.strength).sum();
-    if pathogen_level > 10.0 {
+    let immune_system = immune_system.single();
+    if immune_system.health / immune_system.original_health < 0.4 {
         host_state.status = Status::Sick
     } else {
         host_state.status = Status::Healthy
     }
-    host_state.sickness = (pathogens.iter().len() as f32 / 50.0).min(1.0);
+    host_state.sickness =
+        (pathogens.iter().len() as f32 / (global_state.generation as f32 * 25.0)).min(1.0);
 
-    let immune_system = immune_system.single();
     if immune_system.health < 0.0 {
         host_state.status = Status::Dead;
         let _ = state.push(GameState::Dead);

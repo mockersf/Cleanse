@@ -9,6 +9,17 @@ use super::{z_layers, ScreenTag};
 pub struct ImmuneSystem {
     pub speed: f32,
     pub health: f32,
+    pub original_health: f32,
+}
+
+impl ImmuneSystem {
+    fn new(speed: f32, health: f32) -> ImmuneSystem {
+        ImmuneSystem {
+            speed,
+            health,
+            original_health: health,
+        }
+    }
 }
 
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
@@ -38,10 +49,10 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
             ..Default::default()
         })
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(ImmuneSystem {
-            speed: 100.0 + 10.0 * global_state.generation as f32,
-            health: 10.0 + global_state.generation as f32,
-        })
+        .insert(ImmuneSystem::new(
+            80.0 + 5.0 * global_state.generation as f32,
+            10.0 + global_state.generation as f32 / 2.0,
+        ))
         .insert(ScreenTag);
 }
 
