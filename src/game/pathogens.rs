@@ -32,7 +32,7 @@ pub fn under_attack(
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_xyz(
                     rng.gen_range((-width / 2.0)..(width / 2.0)),
-                    rng.gen_range((-height / 2.0)..(height / 2.0)),
+                    rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
                     z_layers::PATHOGEN,
                 ),
                 sprite: Sprite {
@@ -55,7 +55,7 @@ pub fn under_attack(
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_xyz(
                     rng.gen_range((-width / 2.0)..(width / 2.0)),
-                    rng.gen_range((-height / 2.0)..(height / 2.0)),
+                    rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
                     z_layers::PATHOGEN,
                 ),
                 sprite: Sprite {
