@@ -6,18 +6,12 @@ use bevy_egui::{
 
 use crate::{menu::button, GameState, GlobalState};
 
-use super::tissue::update_tissue_material;
-
 pub struct IntroPlugin;
 
 impl Plugin for IntroPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_system_set(SystemSet::on_update(GameState::Intro).with_system(maybe_skip))
-            .add_system_set(
-                SystemSet::on_update(GameState::Intro)
-                    .with_system(intro)
-                    .with_system(update_tissue_material),
-            );
+            .add_system_set(SystemSet::on_update(GameState::Intro).with_system(intro));
     }
 }
 

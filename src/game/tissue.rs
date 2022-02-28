@@ -33,6 +33,9 @@ impl Plugin for TissuePlugin {
                 SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>),
             )
             .add_system_set(
+                SystemSet::on_update(GameState::Intro).with_system(update_tissue_material),
+            )
+            .add_system_set(
                 SystemSet::on_update(GameState::Playing).with_system(update_tissue_material),
             );
     }
@@ -72,7 +75,7 @@ fn setup(
 }
 
 #[allow(clippy::type_complexity)]
-pub fn update_tissue_material(
+fn update_tissue_material(
     camera: Query<
         &Transform,
         (
@@ -101,7 +104,7 @@ pub fn update_tissue_material(
 
 #[derive(Component, Debug, Clone, TypeUuid, Default, AsStd140)]
 #[uuid = "754DDD8C-641C-48F2-A330-596F22A8AB57"]
-pub struct TissueMaterial {
+struct TissueMaterial {
     resolution: Vec2,
     pos: Vec2,
     time: f32,
@@ -112,7 +115,7 @@ pub struct TissueMaterial {
 }
 
 #[derive(Clone)]
-pub struct GpuTissueMaterial {
+struct GpuTissueMaterial {
     bind_group: BindGroup,
 }
 
