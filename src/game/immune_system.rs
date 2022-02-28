@@ -67,16 +67,16 @@ pub fn movements(
     windows: Res<Windows>,
 ) {
     let mut order = Vec2::ZERO;
-    if keyboard_input.pressed(KeyCode::Right) {
+    if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D]) {
         order.x += 1.0;
     }
-    if keyboard_input.pressed(KeyCode::Left) {
+    if keyboard_input.any_pressed([KeyCode::Left, KeyCode::A]) {
         order.x -= 1.0;
     }
-    if keyboard_input.pressed(KeyCode::Up) {
+    if keyboard_input.any_pressed([KeyCode::Up, KeyCode::W]) {
         order.y += 1.0;
     }
-    if keyboard_input.pressed(KeyCode::Down) {
+    if keyboard_input.any_pressed([KeyCode::Down, KeyCode::S]) {
         order.y -= 1.0;
     }
 
