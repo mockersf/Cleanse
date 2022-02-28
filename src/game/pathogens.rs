@@ -97,7 +97,6 @@ pub fn spawn(
             })
             .insert_bundle(ColliderBundle {
                 shape: ColliderShape::cuboid(5.0, 5.0).into(),
-                flags: ActiveEvents::CONTACT_EVENTS.into(),
                 ..Default::default()
             })
             .insert(RigidBodyPositionSync::Discrete)
