@@ -28,10 +28,14 @@ pub fn spawn(
     if rng.gen_bool((state.risks.bacteria * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
-        let position = Vec2::new(
-            rng.gen_range((-width / 2.0)..(width / 2.0)),
-            rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
-        );
+        let position = std::iter::repeat_with(|| {
+            Vec2::new(
+                rng.gen_range((-width / 2.0)..(width / 2.0)),
+                rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
+            )
+        })
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
+        .unwrap();
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
@@ -71,10 +75,14 @@ pub fn spawn(
     if rng.gen_bool((state.risks.virus * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
-        let position = Vec2::new(
-            rng.gen_range((-width / 2.0)..(width / 2.0)),
-            rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
-        );
+        let position = std::iter::repeat_with(|| {
+            Vec2::new(
+                rng.gen_range((-width / 2.0)..(width / 2.0)),
+                rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
+            )
+        })
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
+        .unwrap();
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
