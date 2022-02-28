@@ -2,25 +2,21 @@ use bevy::prelude::*;
 use bevy_egui::{
     egui::{
         self, text::LayoutJob, Align2, Color32, FontData, FontDefinitions, FontFamily, RichText,
-        Stroke, TextFormat, TextStyle, Ui, Widget, WidgetText,
+        Stroke, TextFormat, TextStyle,
     },
     EguiContext,
 };
 
-use crate::{assets::LoadingState, tear_down, GameState, GlobalState};
+use crate::{assets::LoadingState, menu::button, GameState, GlobalState};
 
-pub struct MenuPlugin;
+pub struct CheatPlugin;
 
-impl Plugin for MenuPlugin {
+impl Plugin for CheatPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Menu).with_system(setup))
-            .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(tear_down::<ScreenTag>))
-            .add_system_set(SystemSet::on_update(GameState::Menu).with_system(menu));
+        app.add_system_set(SystemSet::on_enter(GameState::Cheat).with_system(setup))
+            .add_system_set(SystemSet::on_update(GameState::Cheat).with_system(cheat));
     }
 }
-
-#[derive(Component)]
-struct ScreenTag;
 
 fn setup(mut egui_context: ResMut<EguiContext>) {
     debug!("Loading Screen");
@@ -69,12 +65,11 @@ fn setup(mut egui_context: ResMut<EguiContext>) {
     ctx.set_fonts(fonts);
 }
 
-fn menu(
+fn cheat(
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<GameState>>,
     asset_state: Res<State<LoadingState>>,
-    global_state: Res<GlobalState>,
-    keyboard: Res<Input<KeyCode>>,
+    mut global_state: ResMut<GlobalState>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -86,70 +81,37 @@ fn menu(
                 ui.separator();
                 ui.vertical_centered_justified(|ui| {
                     ui.set_max_width(350.0);
-                    let mut new_game = LayoutJob::default();
-                    new_game.append(
-                        "New Game",
+                    let mut generation = LayoutJob::default();
+                    generation.append(
+                        "Increase generation",
                         0.0,
                         TextFormat::simple(egui::TextStyle::Button, Color32::WHITE),
                     );
-                    if global_state.generation > 0 {
-                        new_game.append(
-                            &format!("\ngeneration {}", global_state.generation),
-                            0.0,
-                            TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
-                        );
-                    }
+                    generation.append(
+                        &format!("\ngeneration {}", global_state.generation),
+                        0.0,
+                        TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
+                    );
 
                     button(
                         ui,
-                        new_game,
+                        generation,
                         || {
-                            let _ = state.set(GameState::Playing);
+                            global_state.generation += 1;
                         },
                         asset_state.current() != &LoadingState::Assets,
                     );
                     ui.add_space(20.0);
                     button(
                         ui,
-                        "Quit",
+                        "Bach",
                         || {
-                            let _ = state.set(GameState::Exit);
+                            let _ = state.set(GameState::Menu);
                         },
-                        cfg!(not(target_arch = "wasm32")),
+                        true,
                     );
                     ui.add_space(10.0);
-                    if keyboard.pressed(KeyCode::O) {
-                        button(
-                            ui,
-                            "Cheat",
-                            || {
-                                let _ = state.set(GameState::Cheat);
-                            },
-                            asset_state.current() != &LoadingState::Assets,
-                        );
-                    }
                 });
             });
         });
-}
-
-pub fn button(
-    ui: &mut Ui,
-    text: impl Into<WidgetText>,
-    mut on_click: impl FnMut(),
-    is_enabled: bool,
-) {
-    ui.scope(|ui| {
-        if !is_enabled {
-            ui.set_enabled(false);
-        }
-
-        let button = bevy_egui::egui::Button::new(text)
-            .stroke(Stroke::new(5.0, Color32::BROWN))
-            .fill(Color32::DARK_RED);
-
-        if button.ui(ui).clicked() {
-            on_click()
-        }
-    });
 }
