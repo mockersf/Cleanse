@@ -72,7 +72,7 @@ fn setup(
 }
 
 #[allow(clippy::type_complexity)]
-fn update_tissue_material(
+pub fn update_tissue_material(
     camera: Query<
         &Transform,
         (
@@ -101,7 +101,7 @@ fn update_tissue_material(
 
 #[derive(Component, Debug, Clone, TypeUuid, Default, AsStd140)]
 #[uuid = "754DDD8C-641C-48F2-A330-596F22A8AB57"]
-struct TissueMaterial {
+pub struct TissueMaterial {
     resolution: Vec2,
     pos: Vec2,
     time: f32,
@@ -112,7 +112,7 @@ struct TissueMaterial {
 }
 
 #[derive(Clone)]
-struct GpuTissueMaterial {
+pub struct GpuTissueMaterial {
     bind_group: BindGroup,
 }
 

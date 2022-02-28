@@ -18,7 +18,7 @@ mod bloodfield;
 mod camera;
 mod death;
 mod game;
-mod menu;
+pub mod menu;
 mod splash;
 
 fn main() {
@@ -87,6 +87,7 @@ pub enum GameState {
     Playing,
     Dead,
     Exit,
+    Intro,
 }
 
 pub fn tear_down<Tag: Component>(mut commands: Commands, query: Query<Entity, With<Tag>>) {

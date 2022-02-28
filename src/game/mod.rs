@@ -10,6 +10,7 @@ use self::{
 
 mod host;
 mod immune_system;
+mod intro;
 mod pathogens;
 pub mod tissue;
 pub mod ui;
@@ -25,6 +26,7 @@ impl Plugin for GamePlugin {
         )
         .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>))
         .add_plugin(tissue::TissuePlugin)
+        .add_plugin(intro::IntroPlugin)
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(state_management)
@@ -53,6 +55,7 @@ pub struct ScreenTag;
 fn setup(
     mut commands: Commands,
     mut camera: Query<&mut Transform, (With<Camera>, Without<ImmuneSystem>)>,
+    mut state: ResMut<State<GameState>>,
 ) {
     if let Ok(mut transform) = camera.get_single_mut() {
         transform.translation.x = 0.0;
@@ -68,6 +71,8 @@ fn setup(
         },
         sickness: 0.0,
     });
+
+    let _ = state.push(GameState::Intro);
 }
 
 fn state_management(keyboard_input: Res<Input<KeyCode>>, mut state: ResMut<State<GameState>>) {

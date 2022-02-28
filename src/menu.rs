@@ -122,7 +122,12 @@ fn menu(
         });
 }
 
-fn button(ui: &mut Ui, text: impl Into<WidgetText>, mut on_click: impl FnMut(), is_enabled: bool) {
+pub fn button(
+    ui: &mut Ui,
+    text: impl Into<WidgetText>,
+    mut on_click: impl FnMut(),
+    is_enabled: bool,
+) {
     ui.scope(|ui| {
         if !is_enabled {
             ui.set_enabled(false);
