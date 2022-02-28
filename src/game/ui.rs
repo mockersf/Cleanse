@@ -22,7 +22,7 @@ pub fn status(
             let radius = 0.2 * rect.height();
 
             {
-                let mut rect = rect.clone();
+                let mut rect = rect;
                 rect.set_right(egui::lerp(rect.left()..=rect.right(), 0.45));
 
                 let immune_system = immune_system.single();
@@ -48,7 +48,7 @@ pub fn status(
                 };
                 if current_health > 0.0 {
                     let end = egui::lerp(rect.left()..=rect.right(), current_health);
-                    let mut health_bar = rect.clone();
+                    let mut health_bar = rect;
                     health_bar.set_right(end);
                     ui.painter()
                         .rect(health_bar, radius, Color32::GREEN, Stroke::none());
@@ -67,7 +67,7 @@ pub fn status(
 
             {
                 if global_state.expectancy > 0.0 {
-                    let mut rect = rect.clone();
+                    let mut rect = rect;
                     rect.set_left(egui::lerp(rect.left()..=rect.right(), 0.55));
 
                     let current_life = (state.age / global_state.expectancy).min(1.0);
@@ -76,7 +76,7 @@ pub fn status(
                         ui.painter()
                             .rect(rect, radius, Color32::DARK_RED, Stroke::none());
                         let end = egui::lerp(rect.left()..=rect.right(), current_life);
-                        let mut health_bar = rect.clone();
+                        let mut health_bar = rect;
                         health_bar.set_right(end);
                         ui.painter()
                             .rect(health_bar, radius, Color32::BLUE, Stroke::none());
@@ -87,7 +87,7 @@ pub fn status(
                             rect.left()..=rect.right(),
                             global_state.expectancy / state.age,
                         );
-                        let mut last_max = rect.clone();
+                        let mut last_max = rect;
                         last_max.set_left(center * 0.999);
                         last_max.set_right(center * 1.001);
                         ui.painter()
