@@ -65,6 +65,8 @@ pub fn movements(
         &ImmuneSystem,
     )>,
     windows: Res<Windows>,
+    host_state: Res<HostState>,
+    global_state: Res<GlobalState>,
 ) {
     let mut order = Vec2::ZERO;
     if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D]) {
@@ -88,6 +90,7 @@ pub fn movements(
             * time.delta_seconds()
             * immune_system.speed
             * (1.0 - distance_to_zero / 562_500.0)
+            * (1.0 / (host_state.age / global_state.expectancy.max(50.0)).max(1.0))
             * 100000.0;
         rb_forces.force = move_by.into();
     }
