@@ -55,7 +55,7 @@ fn cheat(
                     ui.add_space(40.0);
                     button(
                         ui,
-                        "Bach",
+                        "Back",
                         || {
                             let _ = state.set(GameState::Menu);
                         },
