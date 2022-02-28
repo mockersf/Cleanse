@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{
-        self, text::LayoutJob, Align2, Color32, FontData, FontDefinitions, FontFamily, RichText,
-        Stroke, TextFormat, TextStyle,
-    },
+    egui::{self, text::LayoutJob, Align2, Color32, RichText, TextFormat},
     EguiContext,
 };
 
@@ -13,56 +10,8 @@ pub struct CheatPlugin;
 
 impl Plugin for CheatPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Cheat).with_system(setup))
-            .add_system_set(SystemSet::on_update(GameState::Cheat).with_system(cheat));
+        app.add_system_set(SystemSet::on_update(GameState::Cheat).with_system(cheat));
     }
-}
-
-fn setup(mut egui_context: ResMut<EguiContext>) {
-    debug!("Loading Screen");
-
-    let ctx = egui_context.ctx_mut();
-    let mut style: egui::Style = (*ctx.style()).clone();
-    style.spacing.item_spacing = egui::vec2(20.0, 20.0);
-    style.spacing.button_padding = egui::vec2(10.0, 10.0);
-    style.spacing.window_padding = egui::vec2(20.0, 20.0);
-    style.visuals.widgets.noninteractive.bg_fill = Color32::from_rgb(30, 0, 0);
-    style.visuals.widgets.noninteractive.bg_stroke = Stroke::none();
-    style.visuals.widgets.inactive.fg_stroke = Stroke::new(1.0, Color32::WHITE);
-    style.visuals.widgets.hovered.bg_stroke = Stroke::none();
-    style.visuals.widgets.hovered.expansion = 10.0;
-    style.visuals.window_corner_radius = 5.0;
-    ctx.set_style(style);
-
-    let mut fonts = FontDefinitions::default();
-    fonts.font_data.insert(
-        "Kenney Bold".to_owned(),
-        FontData::from_static(include_bytes!("../assets/fonts/Kenney Bold.ttf")),
-    );
-    fonts
-        .fonts_for_family
-        .get_mut(&FontFamily::Proportional)
-        .unwrap()
-        .insert(0, "Kenney Bold".to_owned());
-
-    fonts
-        .family_and_size
-        .entry(TextStyle::Heading)
-        .and_modify(|f| f.1 = 50.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Button)
-        .and_modify(|f| f.1 = 35.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Body)
-        .and_modify(|f| f.1 = 35.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Small)
-        .and_modify(|f| f.1 = 15.0);
-
-    ctx.set_fonts(fonts);
 }
 
 fn cheat(
@@ -102,6 +51,8 @@ fn cheat(
                         asset_state.current() != &LoadingState::Assets,
                     );
                     ui.add_space(20.0);
+                    // extra space so that back button is not aligned with other in menu
+                    ui.add_space(40.0);
                     button(
                         ui,
                         "Bach",
