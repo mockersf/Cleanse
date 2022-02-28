@@ -43,7 +43,6 @@ fn menu(
         .min_width(800.0)
         .show(egui_context.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
-                ui.separator();
                 ui.heading(format!("You died at age {:>2.1}", host_state.age));
                 ui.add_space(10.0);
                 ui.heading("That was inevitable.");
