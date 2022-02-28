@@ -151,11 +151,8 @@ pub fn collisions(
                     }
                 };
                 pat.in_contact = true;
-                if pat.last_hit.finished() {
-                    pat.last_hit.reset();
-                    let d = pat.last_hit.duration();
-                    pat.last_hit.set_elapsed(d);
-                }
+                let d = pat.last_hit.duration();
+                pat.last_hit.set_elapsed(d);
             }
             ContactEvent::Stopped(h1, h2) => {
                 let entity1 = h1.entity();
