@@ -41,7 +41,7 @@ fn setup(mut egui_context: ResMut<EguiContext>) {
     let mut fonts = FontDefinitions::default();
     fonts.font_data.insert(
         "Kenney Bold".to_owned(),
-        FontData::from_static(include_bytes!("../assets/fonts/Kenney Bold.ttf")),
+        FontData::from_static(include_bytes!("../included/fonts/Kenney Bold.ttf")),
     );
     fonts
         .fonts_for_family
