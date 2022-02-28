@@ -76,7 +76,10 @@ fn main() {
         .add_plugin(menu::MenuPlugin)
         .add_plugin(game::GamePlugin)
         .add_plugin(death::DeathPlugin)
-        .insert_resource(GlobalState { generation: 0 })
+        .insert_resource(GlobalState {
+            generation: 0,
+            expectancy: 0.0,
+        })
         .run();
 }
 
@@ -104,4 +107,5 @@ fn exit(mut app_exit_events: EventWriter<AppExit>) {
 
 pub struct GlobalState {
     pub generation: usize,
+    pub expectancy: f32,
 }

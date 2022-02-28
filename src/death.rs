@@ -64,6 +64,7 @@ fn death(
                         "Try Again...",
                         || {
                             global_state.generation += 1;
+                            global_state.expectancy = host_state.age.max(global_state.expectancy);
                             let _ = state.set(GameState::Menu);
                         },
                         true,
