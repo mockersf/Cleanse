@@ -42,7 +42,7 @@ trace = [ "bevy/trace", "bevy/trace_tracy" ]
 
 
 [patch.crates-io]
-bevy = { git = "https://github.com/bevyengine/bevy" }
+bevy = { git = "https://github.com/bevyengine//bevy", branch = "main" }
 bevy_easings = { git = "https://github.com/vleue/bevy_easings", branch = "add-as-bundle" }
 bevy_egui = { git = "https://github.com/mockersf/bevy_egui", branch = "bevy-main" }
 bevy_prototype_lyon = { git = "https://github.com/mockersf/bevy_prototype_lyon", branch = "bevy-main" }
@@ -50,6 +50,8 @@ bevy_rapier2d = { git = "https://github.com/mockersf/bevy_rapier", branch = "bev
 # needed for https://github.com/dimforge/rapier/pull/284
 rapier2d = { git = "https://github.com/dimforge/rapier" }
 
+[patch."https://github.com/bevyengine/bevy"]
+bevy = { git = "https://github.com/bevyengine//bevy", branch = "main" }
 
 [profile.dev.package."*"]
 opt-level = 3
