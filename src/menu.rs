@@ -48,6 +48,7 @@ fn setup(mut egui_context: ResMut<EguiContext>) {
         .get_mut(&FontFamily::Proportional)
         .unwrap()
         .insert(0, "Kenney Bold".to_owned());
+
     fonts
         .family_and_size
         .entry(TextStyle::Heading)
@@ -56,6 +57,15 @@ fn setup(mut egui_context: ResMut<EguiContext>) {
         .family_and_size
         .entry(TextStyle::Button)
         .and_modify(|f| f.1 = 35.0);
+    fonts
+        .family_and_size
+        .entry(TextStyle::Body)
+        .and_modify(|f| f.1 = 35.0);
+    fonts
+        .family_and_size
+        .entry(TextStyle::Small)
+        .and_modify(|f| f.1 = 15.0);
+
     ctx.set_fonts(fonts);
 }
 
