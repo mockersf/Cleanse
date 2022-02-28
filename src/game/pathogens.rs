@@ -182,11 +182,9 @@ pub fn refresh_hit(
     time: Res<Time>,
 ) {
     for mut pathogen in pathogens.iter_mut() {
-        if pathogen.last_hit.tick(time.delta()).just_finished() {
-            if pathogen.in_contact {
-                let mut immune_system = immune_system.single_mut();
-                immune_system.health -= pathogen.strength;
-            }
+        if pathogen.last_hit.tick(time.delta()).just_finished() && pathogen.in_contact {
+            let mut immune_system = immune_system.single_mut();
+            immune_system.health -= pathogen.strength;
         }
     }
 }
