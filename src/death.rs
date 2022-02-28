@@ -27,7 +27,7 @@ impl Plugin for DeathPlugin {
     }
 }
 
-const TEXT: [&'static str; 3] = [
+const TEXT: [&str; 3] = [
     "Already?",
     "Good news! You'll get stronger\nwith each generation.",
     "That was inevitable.",

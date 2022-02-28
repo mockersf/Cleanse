@@ -27,7 +27,7 @@ fn maybe_skip(mut state: ResMut<State<GameState>>, global_state: Res<GlobalState
     }
 }
 
-const TEXTS: [[&'static str; 3]; 2] = [
+const TEXTS: [[&str; 3]; 2] = [
     ["Welcome", "Just avoid contamination.", "Let's try..."],
     [
         "Welcome back!",
