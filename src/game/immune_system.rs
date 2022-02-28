@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::GlobalState;
 
-use super::{z_layers, ScreenTag};
+use super::{z_layers, HostState, ScreenTag};
 
 #[derive(Component)]
 pub struct ImmuneSystem {
@@ -103,4 +103,15 @@ pub fn movements(
         .translation
         .y
         .clamp(-height / 2.0, height / 2.0 * 0.925);
+}
+
+pub fn health(
+    time: Res<Time>,
+    mut immune_system: Query<(&RigidBodyPositionComponent, &mut ImmuneSystem)>,
+    host_state: Res<HostState>,
+) {
+    let (rb_position, mut immune_system) = immune_system.single_mut();
+    let position: Vec2 = rb_position.position.translation.into();
+    let distance_to_zero = (position.distance(Vec2::ZERO) - 100.0).max(0.0);
+    immune_system.health -= distance_to_zero / 500.0 * time.delta_seconds() * host_state.sickness;
 }
