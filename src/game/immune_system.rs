@@ -83,11 +83,11 @@ pub fn movements(
     let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
     if order != Vec2::ZERO {
         let position: Vec2 = rb_position.position.translation.into();
-        let distance_to_zero = (position.distance(Vec2::ZERO) - 100.0).max(0.0);
+        let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
         let move_by = order.normalize()
             * time.delta_seconds()
             * immune_system.speed
-            * (1.0 - distance_to_zero / 750.0)
+            * (1.0 - distance_to_zero / 562_500.0)
             * 100000.0;
         rb_forces.force = move_by.into();
     }
@@ -112,6 +112,7 @@ pub fn health(
 ) {
     let (rb_position, mut immune_system) = immune_system.single_mut();
     let position: Vec2 = rb_position.position.translation.into();
-    let distance_to_zero = (position.distance(Vec2::ZERO) - 100.0).max(0.0);
-    immune_system.health -= distance_to_zero / 500.0 * time.delta_seconds() * host_state.sickness;
+    let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
+    immune_system.health -=
+        distance_to_zero / 250_000.0 * time.delta_seconds() * host_state.sickness;
 }
