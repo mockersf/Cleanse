@@ -25,7 +25,7 @@ pub fn spawn(
     windows: Res<Windows>,
 ) {
     let mut rng = rand::thread_rng();
-    if rng.gen_bool((state.risks.bacteria * time.delta_seconds()) as f64) {
+    if rng.gen_bool((state.risks.bacteria * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         let position = Vec2::new(
@@ -68,7 +68,7 @@ pub fn spawn(
                 ScreenTag,
             ));
     }
-    if rng.gen_bool((state.risks.virus * time.delta_seconds()) as f64) {
+    if rng.gen_bool((state.risks.virus * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         let position = Vec2::new(
