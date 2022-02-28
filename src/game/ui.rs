@@ -17,10 +17,10 @@ pub fn status(
         let healthbar_size = 150.0;
 
         let immune_system = immune_system.single();
+        let current_health =
+            (immune_system.health / immune_system.original_health * healthbar_size) as usize;
         status_to_display.append(
-            &"-".repeat(
-                (immune_system.health / immune_system.original_health * healthbar_size) as usize,
-            ),
+            &"-".repeat(current_health),
             0.0,
             TextFormat {
                 color: Color32::GREEN,
@@ -30,10 +30,7 @@ pub fn status(
             },
         );
         status_to_display.append(
-            &"-".repeat(
-                ((1.0 - immune_system.health / immune_system.original_health) * healthbar_size)
-                    as usize,
-            ),
+            &"-".repeat(healthbar_size as usize - current_health),
             0.0,
             TextFormat {
                 color: Color32::RED,
