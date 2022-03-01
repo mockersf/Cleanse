@@ -58,7 +58,6 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
 
 pub fn movements(
     keyboard_input: Res<Input<KeyCode>>,
-    time: Res<Time>,
     mut immune_system: Query<(
         &mut RigidBodyPositionComponent,
         &mut RigidBodyForcesComponent,
@@ -87,11 +86,10 @@ pub fn movements(
         let position: Vec2 = rb_position.position.translation.into();
         let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
         let move_by = order.normalize()
-            * time.delta_seconds()
             * immune_system.speed
             * (1.0 - distance_to_zero / 562_500.0)
             * (1.0 / (host_state.age / global_state.expectancy.max(50.0)).max(1.0))
-            * 100000.0;
+            * 1000.0;
         rb_forces.force = move_by.into();
     }
     let window = windows.get_primary().unwrap();

@@ -122,7 +122,6 @@ pub fn spawn(
 }
 
 pub fn movements(
-    time: Res<Time>,
     immune_system: Query<&Transform, With<ImmuneSystem>>,
     mut pathogens: Query<(
         &RigidBodyPositionComponent,
@@ -134,7 +133,7 @@ pub fn movements(
     for (rb_position, mut rb_forces, pathogen) in pathogens.iter_mut() {
         let position: Vec2 = rb_position.position.translation.into();
         let order = target - position;
-        let move_by = order.normalize() * time.delta_seconds() * pathogen.speed * 100000.0;
+        let move_by = order.normalize() * pathogen.speed * 1000.0;
         rb_forces.force = move_by.into();
     }
 }
