@@ -50,8 +50,9 @@ pub fn state_update(
     } else {
         host_state.status = Status::Healthy
     }
-    host_state.sickness =
-        (pathogens.iter().len() as f32 / (global_state.generation as f32 * 25.0)).min(1.0);
+    host_state.sickness = (pathogens.iter().len() as f32
+        / ((global_state.generation as f32 + 1.0).min(5.0) * 25.0))
+        .min(1.0);
 
     if immune_system.health <= 0.0 {
         host_state.status = Status::Dead;
