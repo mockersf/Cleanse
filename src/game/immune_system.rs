@@ -1,15 +1,17 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
+use rand::Rng;
 
 use crate::{progress::Progress, GlobalState};
 
-use super::{z_layers, HostState, ScreenTag};
+use super::{white_cells::WhiteCell, z_layers, HostState, ScreenTag};
 
 #[derive(Component)]
 pub struct ImmuneSystem {
     pub speed: f32,
     pub health: f32,
     pub original_health: f32,
+    pub attack_spawn_rate: f32,
 }
 
 impl ImmuneSystem {
@@ -18,6 +20,7 @@ impl ImmuneSystem {
             speed,
             health,
             original_health: health,
+            attack_spawn_rate: 1.0,
         }
     }
 }
@@ -129,4 +132,46 @@ pub fn health(
     immune_system.health = (immune_system.health
         + (distance_to_zero.min(0.0).abs() / 10_000.0) * time.delta_seconds() * host_state.regen)
         .min(immune_system.original_health);
+}
+
+pub fn spawn_white_cell(
+    mut commands: Commands,
+    immune_system: Query<(&RigidBodyPositionComponent, &ImmuneSystem)>,
+    time: Res<Time>,
+) {
+    let (position, immune_system) = immune_system.single();
+    if rand::thread_rng().gen_bool((immune_system.attack_spawn_rate * time.delta_seconds()) as f64)
+    {
+        commands
+            .spawn_bundle(SpriteBundle {
+                transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
+                sprite: Sprite {
+                    color: Color::WHITE,
+                    custom_size: Some(Vec2::new(4.0, 4.0)),
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
+            .insert_bundle(RigidBodyBundle {
+                position: (*position).clone().into(),
+                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
+                damping: RigidBodyDamping {
+                    linear_damping: 10.0,
+                    angular_damping: 10.0,
+                }
+                .into(),
+                ..Default::default()
+            })
+            .insert_bundle(ColliderBundle {
+                collider_type: ColliderType::Sensor.into(),
+                shape: ColliderShape::cuboid(2.0, 2.0).into(),
+                flags: ActiveEvents::INTERSECTION_EVENTS.into(),
+                ..Default::default()
+            })
+            .insert(RigidBodyPositionSync::Discrete)
+            .insert(WhiteCell {
+                spawned_at: time.seconds_since_startup() as f32,
+            })
+            .insert(ScreenTag);
+    }
 }

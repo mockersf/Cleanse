@@ -14,6 +14,7 @@ mod intro;
 mod pathogens;
 pub mod tissue;
 pub mod ui;
+mod white_cells;
 
 pub struct GamePlugin;
 
@@ -32,12 +33,14 @@ impl Plugin for GamePlugin {
                 .with_system(state_management)
                 .with_system(immune_system::movements)
                 .with_system(immune_system::health)
+                .with_system(immune_system::spawn_white_cell)
                 .with_system(host::aging)
                 .with_system(host::state_update)
                 .with_system(pathogens::spawn)
                 .with_system(pathogens::movements)
                 .with_system(pathogens::collisions)
                 .with_system(pathogens::refresh_hit)
+                .with_system(white_cells::movements)
                 .with_system(ui::status),
         );
     }
