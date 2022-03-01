@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::GlobalState;
+use crate::{progress::Progress, GlobalState};
 
 use super::{z_layers, HostState, ScreenTag};
 
@@ -23,6 +23,19 @@ impl ImmuneSystem {
 }
 
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
+    let mut speed = 80.0 + 5.0 * global_state.generation as f32;
+    let mut health = 10.0 + global_state.generation as f32 / 2.0;
+    if global_state.has(&Progress::PersonalHygiene) {
+        health += 15.0;
+    }
+    if global_state.has(&Progress::Sanitation) {
+        speed += 20.0;
+    }
+    if global_state.has(&Progress::PreventiveMeasures) {
+        health += 10.0;
+        speed += 10.0;
+    }
+
     commands
         .spawn_bundle(SpriteBundle {
             transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
@@ -49,10 +62,7 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
             ..Default::default()
         })
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(ImmuneSystem::new(
-            80.0 + 5.0 * global_state.generation as f32,
-            10.0 + global_state.generation as f32 / 2.0,
-        ))
+        .insert(ImmuneSystem::new(speed, health))
         .insert(ScreenTag);
 }
 

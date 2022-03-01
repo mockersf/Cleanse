@@ -77,6 +77,19 @@ fn setup(
     if global_state.has(&Progress::Vaccine) {
         virus -= 0.3;
     }
+    if global_state.has(&Progress::PersonalHygiene) {
+        bacteria -= 0.1;
+        virus -= 0.1;
+        regen += 0.1;
+    }
+    if global_state.has(&Progress::Sanitation) {
+        bacteria -= 0.15;
+        virus -= 0.15;
+    }
+    if global_state.has(&Progress::PreventiveMeasures) {
+        bacteria -= 0.2;
+        virus -= 0.2;
+    }
 
     commands.insert_resource(HostState {
         age: 0.0,
