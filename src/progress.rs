@@ -236,6 +236,10 @@ fn image_button(ui: &mut Ui, progress: Progress, global_state: &mut GlobalState)
             global_state.progress -= cost as f32;
             global_state.get(&progress);
         }
-        ui.small(&format!("{:<20}\n\n{}", progress, cost));
+        if global_state.has(&progress) {
+            ui.small(&format!("{:<20}\n\n", progress));
+        } else {
+            ui.small(&format!("{:<20}\n\n{}", progress, cost));
+        }
     });
 }
