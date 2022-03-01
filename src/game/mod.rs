@@ -73,7 +73,7 @@ fn setup(
     let mut bacteria = 1.0;
     let mut virus = 1.0;
     let mut regen = 0.0;
-    let mut dilatation = 500.0;
+    let mut dilatation = 500.0 + global_state.generation as f32 * 5.0;
     if global_state.has(&Progress::Disinfectant) {
         bacteria -= 0.1;
         virus -= 0.1;
