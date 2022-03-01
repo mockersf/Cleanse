@@ -55,16 +55,14 @@ pub fn attack(
                 } else {
                     continue;
                 }
-            } else {
-                if let Ok(white_cell) = white_cells.get(e2) {
-                    if let Ok(pathogen) = pathogens.get(e1) {
-                        ((e2, white_cell), (e1, pathogen))
-                    } else {
-                        continue;
-                    }
+            } else if let Ok(white_cell) = white_cells.get(e2) {
+                if let Ok(pathogen) = pathogens.get(e1) {
+                    ((e2, white_cell), (e1, pathogen))
                 } else {
                     continue;
                 }
+            } else {
+                continue;
             };
             if white_cell.1.strength > pathogen.1.strength {
                 commands.entity(white_cell.0).despawn_recursive();

@@ -163,7 +163,7 @@ pub fn spawn_white_cell(
                 ..Default::default()
             })
             .insert_bundle(RigidBodyBundle {
-                position: (*position).clone().into(),
+                position: (**position).into(),
                 mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
                 damping: RigidBodyDamping {
                     linear_damping: 10.0,
