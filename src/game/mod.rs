@@ -71,6 +71,7 @@ fn setup(
     let mut bacteria = 1.0;
     let mut virus = 1.0;
     let mut regen = 0.0;
+    let mut dilatation = 500.0;
     if global_state.has(&Progress::Disinfectant) {
         bacteria -= 0.1;
         virus -= 0.1;
@@ -94,6 +95,12 @@ fn setup(
         bacteria -= 0.2;
         virus -= 0.2;
     }
+    if global_state.has(&Progress::SickDays) {
+        dilatation += 200.0;
+    }
+    if global_state.has(&Progress::FreeHealthcare) {
+        dilatation += 200.0;
+    }
 
     commands.insert_resource(HostState {
         age: 0.0,
@@ -101,6 +108,7 @@ fn setup(
         risks: Risks { bacteria, virus },
         sickness: 0.0,
         regen,
+        dilatation,
     });
 
     let _ = state.push(GameState::Intro);

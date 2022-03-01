@@ -21,6 +21,7 @@ pub struct HostState {
     pub risks: Risks,
     pub sickness: f32,
     pub regen: f32,
+    pub dilatation: f32,
 }
 
 pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {

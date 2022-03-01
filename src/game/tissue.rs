@@ -97,6 +97,7 @@ fn update_tissue_material(
         tissue_material.pos = camera_pos * Vec2::new(1.0, -1.0);
         tissue_material.speed = immune_system.single().speed;
         tissue_material.sickness = host.sickness;
+        tissue_material.dilatation = host.dilatation;
         let mut field_transform = tissue.single_mut();
         field_transform.translation = camera_pos.extend(z_layers::TISSUE);
     }
