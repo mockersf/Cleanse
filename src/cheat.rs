@@ -19,6 +19,7 @@ fn cheat(
     mut state: ResMut<State<GameState>>,
     asset_state: Res<State<LoadingState>>,
     mut global_state: ResMut<GlobalState>,
+    keyboard: Res<Input<KeyCode>>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -45,7 +46,11 @@ fn cheat(
                         ui,
                         generation,
                         || {
-                            global_state.generation += 1;
+                            if keyboard.pressed(KeyCode::LShift) {
+                                global_state.generation += 10;
+                            } else {
+                                global_state.generation += 1;
+                            }
                         },
                         asset_state.current() != &LoadingState::Assets,
                         true,
@@ -66,7 +71,11 @@ fn cheat(
                         ui,
                         progress,
                         || {
-                            global_state.progress += 10.0;
+                            if keyboard.pressed(KeyCode::LShift) {
+                                global_state.progress += 100.0;
+                            } else {
+                                global_state.progress += 10.0;
+                            }
                         },
                         asset_state.current() != &LoadingState::Assets,
                         true,
