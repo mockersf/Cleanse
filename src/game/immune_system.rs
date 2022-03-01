@@ -26,18 +26,18 @@ impl ImmuneSystem {
 }
 
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
-    let mut speed = 80.0 + 5.0 * global_state.generation as f32;
+    let mut speed = 70.0 + 4.0 * global_state.generation as f32;
     let mut health = 10.0 + global_state.generation as f32 / 2.0;
     let mut attack = 0.0;
     if global_state.has(&Progress::PersonalHygiene) {
         health += 15.0;
     }
     if global_state.has(&Progress::Sanitation) {
-        speed += 20.0;
+        speed += 10.0;
     }
     if global_state.has(&Progress::PreventiveMeasures) {
         health += 10.0;
-        speed += 10.0;
+        speed += 5.0;
     }
     if global_state.has(&Progress::FreeHealthcare) {
         attack += 0.1;
@@ -107,7 +107,7 @@ pub fn movements(
         let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
         let move_by = order.normalize()
             * immune_system.speed
-            * (1.0 - distance_to_zero / 562_500.0)
+            * (1.0 - distance_to_zero / 500_000.0)
             * (1.0 / (host_state.age / global_state.expectancy.max(50.0)).max(1.0))
             * 1000.0;
         rb_forces.force = move_by.into();
