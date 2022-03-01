@@ -22,51 +22,54 @@ impl Plugin for MenuPlugin {
 #[derive(Component)]
 struct ScreenTag;
 
-fn setup(mut egui_context: ResMut<EguiContext>) {
-    debug!("Loading Screen");
+fn setup(mut egui_context: ResMut<EguiContext>, mut done: Local<bool>) {
+    if !*done {
+        debug!("Loading Screen");
 
-    let ctx = egui_context.ctx_mut();
-    let mut style: egui::Style = (*ctx.style()).clone();
-    style.spacing.item_spacing = egui::vec2(20.0, 20.0);
-    style.spacing.button_padding = egui::vec2(10.0, 10.0);
-    style.spacing.window_padding = egui::vec2(20.0, 20.0);
-    style.visuals.widgets.noninteractive.bg_fill = Color32::from_rgb(30, 0, 0);
-    style.visuals.widgets.noninteractive.bg_stroke = Stroke::none();
-    style.visuals.widgets.inactive.fg_stroke = Stroke::new(1.0, Color32::WHITE);
-    style.visuals.widgets.hovered.bg_stroke = Stroke::none();
-    style.visuals.widgets.hovered.expansion = 10.0;
-    style.visuals.window_corner_radius = 5.0;
-    ctx.set_style(style);
+        let ctx = egui_context.ctx_mut();
+        let mut style: egui::Style = (*ctx.style()).clone();
+        style.spacing.item_spacing = egui::vec2(20.0, 20.0);
+        style.spacing.button_padding = egui::vec2(10.0, 10.0);
+        style.spacing.window_padding = egui::vec2(20.0, 20.0);
+        style.visuals.widgets.noninteractive.bg_fill = Color32::from_rgb(30, 0, 0);
+        style.visuals.widgets.noninteractive.bg_stroke = Stroke::none();
+        style.visuals.widgets.inactive.fg_stroke = Stroke::new(1.0, Color32::WHITE);
+        style.visuals.widgets.hovered.bg_stroke = Stroke::none();
+        style.visuals.widgets.hovered.expansion = 10.0;
+        style.visuals.window_corner_radius = 5.0;
+        ctx.set_style(style);
 
-    let mut fonts = FontDefinitions::default();
-    fonts.font_data.insert(
-        "Kenney Bold".to_owned(),
-        FontData::from_static(include_bytes!("../included/fonts/Kenney Bold.ttf")),
-    );
-    fonts
-        .fonts_for_family
-        .get_mut(&FontFamily::Proportional)
-        .unwrap()
-        .insert(0, "Kenney Bold".to_owned());
+        let mut fonts = FontDefinitions::default();
+        fonts.font_data.insert(
+            "Kenney Bold".to_owned(),
+            FontData::from_static(include_bytes!("../included/fonts/Kenney Bold.ttf")),
+        );
+        fonts
+            .fonts_for_family
+            .get_mut(&FontFamily::Proportional)
+            .unwrap()
+            .insert(0, "Kenney Bold".to_owned());
 
-    fonts
-        .family_and_size
-        .entry(TextStyle::Heading)
-        .and_modify(|f| f.1 = 50.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Button)
-        .and_modify(|f| f.1 = 35.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Body)
-        .and_modify(|f| f.1 = 35.0);
-    fonts
-        .family_and_size
-        .entry(TextStyle::Small)
-        .and_modify(|f| f.1 = 15.0);
+        fonts
+            .family_and_size
+            .entry(TextStyle::Heading)
+            .and_modify(|f| f.1 = 50.0);
+        fonts
+            .family_and_size
+            .entry(TextStyle::Button)
+            .and_modify(|f| f.1 = 35.0);
+        fonts
+            .family_and_size
+            .entry(TextStyle::Body)
+            .and_modify(|f| f.1 = 35.0);
+        fonts
+            .family_and_size
+            .entry(TextStyle::Small)
+            .and_modify(|f| f.1 = 15.0);
 
-    ctx.set_fonts(fonts);
+        ctx.set_fonts(fonts);
+        *done = true;
+    }
 }
 
 fn menu(
