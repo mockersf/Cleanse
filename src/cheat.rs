@@ -37,11 +37,10 @@ fn cheat(
                         TextFormat::simple(egui::TextStyle::Button, Color32::WHITE),
                     );
                     generation.append(
-                        &format!("\ngeneration {}", global_state.generation),
+                        &format!("\ngeneration: {}", global_state.generation),
                         0.0,
                         TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
                     );
-
                     button(
                         ui,
                         generation,
@@ -49,6 +48,28 @@ fn cheat(
                             global_state.generation += 1;
                         },
                         asset_state.current() != &LoadingState::Assets,
+                        true,
+                    );
+                    ui.add_space(20.0);
+                    let mut progress = LayoutJob::default();
+                    progress.append(
+                        "Increase progress",
+                        0.0,
+                        TextFormat::simple(egui::TextStyle::Button, Color32::WHITE),
+                    );
+                    progress.append(
+                        &format!("\nprogress: {:.0}", global_state.progress),
+                        0.0,
+                        TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
+                    );
+                    button(
+                        ui,
+                        progress,
+                        || {
+                            global_state.progress += 10.0;
+                        },
+                        asset_state.current() != &LoadingState::Assets,
+                        true,
                     );
                     ui.add_space(20.0);
                     // extra space so that back button is not aligned with other in menu
@@ -60,6 +81,7 @@ fn cheat(
                             let _ = state.set(GameState::Menu);
                         },
                         true,
+                        false,
                     );
                     ui.add_space(10.0);
                 });

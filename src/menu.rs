@@ -107,6 +107,17 @@ fn menu(
                             let _ = state.set(GameState::Playing);
                         },
                         asset_state.current() != &LoadingState::Assets,
+                        false,
+                    );
+                    ui.add_space(20.0);
+                    button(
+                        ui,
+                        "Progress",
+                        || {
+                            let _ = state.set(GameState::Progress);
+                        },
+                        global_state.generation >= 4,
+                        global_state.generation == 4,
                     );
                     ui.add_space(20.0);
                     button(
@@ -116,6 +127,7 @@ fn menu(
                             let _ = state.set(GameState::Exit);
                         },
                         cfg!(not(target_arch = "wasm32")),
+                        false,
                     );
                     ui.add_space(10.0);
                     if keyboard.pressed(KeyCode::O) {
@@ -126,6 +138,7 @@ fn menu(
                                 let _ = state.set(GameState::Cheat);
                             },
                             asset_state.current() != &LoadingState::Assets,
+                            false,
                         );
                     }
                 });
@@ -138,15 +151,22 @@ pub fn button(
     text: impl Into<WidgetText>,
     mut on_click: impl FnMut(),
     is_enabled: bool,
+    is_highlighted: bool,
 ) {
-    ui.scope(|ui| {
+    ui.vertical_centered_justified(|ui| {
         if !is_enabled {
             ui.set_enabled(false);
         }
 
-        let button = bevy_egui::egui::Button::new(text)
-            .stroke(Stroke::new(5.0, Color32::BROWN))
-            .fill(Color32::DARK_RED);
+        let button = if !is_highlighted {
+            bevy_egui::egui::Button::new(text)
+                .stroke(Stroke::new(5.0, Color32::BROWN))
+                .fill(Color32::DARK_RED)
+        } else {
+            bevy_egui::egui::Button::new(text)
+                .stroke(Stroke::new(5.0, Color32::GREEN))
+                .fill(Color32::DARK_GREEN)
+        };
 
         if button.ui(ui).clicked() {
             on_click()

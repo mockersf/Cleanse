@@ -16,18 +16,29 @@ impl Plugin for IntroPlugin {
 }
 
 fn maybe_skip(mut state: ResMut<State<GameState>>, global_state: Res<GlobalState>) {
-    if global_state.generation > 1 {
+    if global_state.generation > 4 {
         let _ = state.pop();
     }
 }
 
-const TEXTS: [[&str; 3]; 2] = [
+const TEXTS: [[&str; 3]; 5] = [
     ["Welcome", "Just avoid contamination.", "Sounds easy!"],
     [
         "Welcome back!",
         "Stay in the blood flow!\nYou're stronger there.",
-        "That should help",
+        "That should help.",
     ],
+    [
+        "Should have mentionned...",
+        "The blood flow is the red at the center.",
+        "Oh, OK.",
+    ],
+    [
+        "A normal life expectancy?",
+        "That's like, 600 years old. Totally doable, just dodge those pathogens.",
+        "I'm... almost there?",
+    ],
+    ["Well", "You're on your own now!", "I got all I need."],
 ];
 
 fn intro(
@@ -39,6 +50,10 @@ fn intro(
         (TEXTS[0][0], TEXTS[0][1], TEXTS[0][2])
     } else if global_state.generation == 1 {
         (TEXTS[1][0], TEXTS[1][1], TEXTS[1][2])
+    } else if global_state.generation == 2 {
+        (TEXTS[2][0], TEXTS[2][1], TEXTS[2][2])
+    } else if global_state.generation == 4 {
+        (TEXTS[3][0], TEXTS[3][1], TEXTS[3][2])
     } else {
         ("", "", "")
     };
@@ -61,6 +76,7 @@ fn intro(
                             let _ = state.pop();
                         },
                         true,
+                        false,
                     );
                     ui.add_space(10.0);
                 });

@@ -27,9 +27,11 @@ impl Plugin for DeathPlugin {
     }
 }
 
-const TEXT: [&str; 3] = [
+const TEXT: [&str; 5] = [
     "Already?",
     "Good news! You'll get stronger\nwith each generation.",
+    "Seems harder than expected.\nLet's see if you can get an...\nunfair advantage.",
+    "Unlocked Progress!\nCheck out what you can get.",
     "That was inevitable.",
 ];
 
@@ -39,12 +41,10 @@ fn death(
     host_state: Res<HostState>,
     mut global_state: ResMut<GlobalState>,
 ) {
-    let text = if global_state.generation == 0 {
-        TEXT[0]
-    } else if global_state.generation == 1 {
-        TEXT[1]
+    let text = if global_state.generation < 4 {
+        TEXT[global_state.generation]
     } else {
-        TEXT[2]
+        TEXT[4]
     };
     egui::Window::new(RichText::new("Death").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -64,10 +64,12 @@ fn death(
                         "Try Again...",
                         || {
                             global_state.generation += 1;
+                            global_state.progress += host_state.age;
                             global_state.expectancy = host_state.age.max(global_state.expectancy);
                             let _ = state.set(GameState::Menu);
                         },
                         true,
+                        false,
                     );
                     ui.add_space(10.0);
                 });

@@ -20,6 +20,7 @@ mod cheat;
 mod death;
 mod game;
 pub mod menu;
+mod progress;
 mod splash;
 
 fn main() {
@@ -76,11 +77,22 @@ fn main() {
         .add_plugin(bloodfield::BloodfieldPlugin)
         .add_plugin(menu::MenuPlugin)
         .add_plugin(cheat::CheatPlugin)
+        .add_plugin(progress::ProgressPlugin)
         .add_plugin(game::GamePlugin)
         .add_plugin(death::DeathPlugin)
         .insert_resource(GlobalState {
             generation: 0,
             expectancy: 0.0,
+            progress: 0.0,
+            disinfectant: usize::MAX,
+            antibiotics: usize::MAX,
+            vaccine: usize::MAX,
+            personal_hygiene: usize::MAX,
+            sanitation: usize::MAX,
+            preventive_measures: usize::MAX,
+            sick_days: usize::MAX,
+            free_healthcare: usize::MAX,
+            parental_leave: usize::MAX,
         })
         .run();
 }
@@ -90,6 +102,7 @@ pub enum GameState {
     Splash,
     Menu,
     Cheat,
+    Progress,
     Playing,
     Dead,
     Exit,
@@ -111,4 +124,47 @@ fn exit(mut app_exit_events: EventWriter<AppExit>) {
 pub struct GlobalState {
     pub generation: usize,
     pub expectancy: f32,
+    pub progress: f32,
+    pub disinfectant: usize,
+    pub antibiotics: usize,
+    pub vaccine: usize,
+    pub personal_hygiene: usize,
+    pub sanitation: usize,
+    pub preventive_measures: usize,
+    pub sick_days: usize,
+    pub free_healthcare: usize,
+    pub parental_leave: usize,
+}
+
+impl GlobalState {
+    fn current_progress_multiplier(&self) -> usize {
+        (if self.disinfectant != usize::MAX {
+            1
+        } else {
+            0
+        }) + (if self.antibiotics != usize::MAX { 1 } else { 0 })
+            + (if self.vaccine != usize::MAX { 1 } else { 0 })
+            + (if self.personal_hygiene != usize::MAX {
+                1
+            } else {
+                0
+            })
+            + (if self.sanitation != usize::MAX { 1 } else { 0 })
+            + (if self.preventive_measures != usize::MAX {
+                1
+            } else {
+                0
+            })
+            + (if self.sick_days != usize::MAX { 1 } else { 0 })
+            + (if self.free_healthcare != usize::MAX {
+                1
+            } else {
+                0
+            })
+            + (if self.parental_leave != usize::MAX {
+                1
+            } else {
+                0
+            })
+    }
 }
