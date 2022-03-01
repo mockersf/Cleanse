@@ -41,6 +41,7 @@ impl Plugin for GamePlugin {
                 .with_system(pathogens::collisions)
                 .with_system(pathogens::refresh_hit)
                 .with_system(white_cells::movements)
+                .with_system(white_cells::attack)
                 .with_system(ui::status),
         );
     }

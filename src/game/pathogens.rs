@@ -148,32 +148,34 @@ pub fn collisions(
             ContactEvent::Started(h1, h2) => {
                 let entity1 = h1.entity();
                 let entity2 = h2.entity();
-                let mut pat = {
+                if let Ok(mut pat) = {
                     if immune_system.contains(entity1) {
-                        pathogens.get_mut(entity2).unwrap()
+                        pathogens.get_mut(entity2)
                     } else if immune_system.contains(entity2) {
-                        pathogens.get_mut(entity1).unwrap()
+                        pathogens.get_mut(entity1)
                     } else {
                         continue;
                     }
-                };
-                pat.in_contact = true;
-                let d = pat.last_hit.duration();
-                pat.last_hit.set_elapsed(d);
+                } {
+                    pat.in_contact = true;
+                    let d = pat.last_hit.duration();
+                    pat.last_hit.set_elapsed(d);
+                }
             }
             ContactEvent::Stopped(h1, h2) => {
                 let entity1 = h1.entity();
                 let entity2 = h2.entity();
-                let mut pat = {
+                if let Ok(mut pat) = {
                     if immune_system.contains(entity1) {
-                        pathogens.get_mut(entity2).unwrap()
+                        pathogens.get_mut(entity2)
                     } else if immune_system.contains(entity2) {
-                        pathogens.get_mut(entity1).unwrap()
+                        pathogens.get_mut(entity1)
                     } else {
                         continue;
                     }
-                };
-                pat.in_contact = false;
+                } {
+                    pat.in_contact = false;
+                }
             }
         };
     }

@@ -171,6 +171,7 @@ pub fn spawn_white_cell(
             .insert(RigidBodyPositionSync::Discrete)
             .insert(WhiteCell {
                 spawned_at: time.seconds_since_startup() as f32,
+                strength: 50.0,
             })
             .insert(ScreenTag);
     }

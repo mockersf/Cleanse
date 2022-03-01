@@ -1,11 +1,14 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{RigidBodyForcesComponent, RigidBodyPositionComponent};
+use bevy_rapier2d::prelude::{
+    IntersectionEvent, IntoEntity, RigidBodyForcesComponent, RigidBodyPositionComponent,
+};
 
-use super::immune_system::ImmuneSystem;
+use super::{immune_system::ImmuneSystem, pathogens::Pathogen};
 
 #[derive(Component)]
 pub struct WhiteCell {
     pub spawned_at: f32,
+    pub strength: f32,
 }
 
 pub fn movements(
@@ -32,6 +35,43 @@ pub fn movements(
         } else {
             let move_by = order * 10000.0;
             rb_forces.force = move_by.into();
+        }
+    }
+}
+
+pub fn attack(
+    mut commands: Commands,
+    mut intersection_events: EventReader<IntersectionEvent>,
+    white_cells: Query<&WhiteCell>,
+    pathogens: Query<&Pathogen>,
+) {
+    for event in intersection_events.iter() {
+        if event.intersecting {
+            let e1 = event.collider1.entity();
+            let e2 = event.collider2.entity();
+            let (white_cell, pathogen) = if let Ok(white_cell) = white_cells.get(e1) {
+                if let Ok(pathogen) = pathogens.get(e2) {
+                    ((e1, white_cell), (e2, pathogen))
+                } else {
+                    continue;
+                }
+            } else {
+                if let Ok(white_cell) = white_cells.get(e2) {
+                    if let Ok(pathogen) = pathogens.get(e1) {
+                        ((e2, white_cell), (e1, pathogen))
+                    } else {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            };
+            if white_cell.1.strength > pathogen.1.strength {
+                commands.entity(white_cell.0).despawn_recursive();
+                commands.entity(pathogen.0).despawn_recursive();
+            } else {
+                commands.entity(white_cell.0).despawn_recursive();
+            }
         }
     }
 }
