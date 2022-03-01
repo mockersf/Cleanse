@@ -17,7 +17,7 @@ impl Plugin for ProgressPlugin {
     }
 }
 
-enum Progress {
+pub enum Progress {
     Disinfectant,
     Antibiotics,
     Vaccine,
@@ -122,7 +122,7 @@ impl Progress {
 }
 
 impl GlobalState {
-    fn has(&self, progress: &Progress) -> bool {
+    pub fn has(&self, progress: &Progress) -> bool {
         match progress {
             Progress::Disinfectant => self.disinfectant != usize::MAX,
             Progress::Antibiotics => self.antibiotics != usize::MAX,

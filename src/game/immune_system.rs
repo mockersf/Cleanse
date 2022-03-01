@@ -113,7 +113,10 @@ pub fn health(
 ) {
     let (rb_position, mut immune_system) = immune_system.single_mut();
     let position: Vec2 = rb_position.position.translation.into();
-    let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
+    let distance_to_zero = position.distance_squared(Vec2::ZERO) - 10_000.0;
     immune_system.health -=
-        distance_to_zero / 250_000.0 * time.delta_seconds() * host_state.sickness;
+        distance_to_zero.max(0.0) / 250_000.0 * time.delta_seconds() * host_state.sickness;
+    immune_system.health = (immune_system.health
+        + (distance_to_zero.min(0.0).abs() / 10_000.0) * time.delta_seconds() * host_state.regen)
+        .min(immune_system.original_health);
 }

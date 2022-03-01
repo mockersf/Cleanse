@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{tear_down, GameState};
+use crate::{progress::Progress, tear_down, GameState, GlobalState};
 
 pub use self::host::HostState;
 use self::{
@@ -57,20 +57,33 @@ fn setup(
     mut commands: Commands,
     mut camera: Query<&mut Transform, (With<Camera>, Without<ImmuneSystem>)>,
     mut state: ResMut<State<GameState>>,
+    global_state: Res<GlobalState>,
 ) {
     if let Ok(mut transform) = camera.get_single_mut() {
         transform.translation.x = 0.0;
         transform.translation.y = 0.0;
     }
 
+    let mut bacteria = 1.0;
+    let mut virus = 1.0;
+    let mut regen = 0.0;
+    if global_state.has(&Progress::Disinfectant) {
+        bacteria -= 0.1;
+        virus -= 0.1;
+    }
+    if global_state.has(&Progress::Antibiotics) {
+        regen += 0.2;
+    }
+    if global_state.has(&Progress::Vaccine) {
+        virus -= 0.3;
+    }
+
     commands.insert_resource(HostState {
         age: 0.0,
         status: Status::Healthy,
-        risks: Risks {
-            bacteria: 1.0,
-            virus: 1.0,
-        },
+        risks: Risks { bacteria, virus },
         sickness: 0.0,
+        regen,
     });
 
     let _ = state.push(GameState::Intro);
