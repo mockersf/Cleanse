@@ -11,6 +11,7 @@ use self::{
 mod host;
 mod immune_system;
 mod intro;
+mod oldest;
 mod pathogens;
 pub mod tissue;
 pub mod ui;
@@ -28,6 +29,7 @@ impl Plugin for GamePlugin {
         .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>))
         .add_plugin(tissue::TissuePlugin)
         .add_plugin(intro::IntroPlugin)
+        .add_plugin(oldest::OldestPlugin)
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(state_management)

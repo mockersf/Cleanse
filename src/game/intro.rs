@@ -35,7 +35,7 @@ const TEXTS: [[&str; 3]; 5] = [
     ],
     [
         "A normal life expectancy?",
-        "That's like, 600 years old. Totally doable, just dodge those pathogens.",
+        "That's like, 300 years old. Totally doable, just dodge those pathogens.",
         "I'm... almost there?",
     ],
     ["Well", "You're on your own now!", "I got all I need."],

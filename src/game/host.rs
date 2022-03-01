@@ -24,8 +24,17 @@ pub struct HostState {
     pub dilatation: f32,
 }
 
-pub fn aging(mut state: ResMut<HostState>, time: Res<Time>) {
-    state.age += time.delta_seconds();
+pub fn aging(
+    mut host_state: ResMut<HostState>,
+    time: Res<Time>,
+    mut state: ResMut<State<GameState>>,
+    mut oldest: Local<bool>,
+) {
+    host_state.age += time.delta_seconds();
+    if !*oldest && host_state.age > 300.0 {
+        let _ = state.push(GameState::Oldest);
+        *oldest = true;
+    }
 }
 
 pub fn state_update(

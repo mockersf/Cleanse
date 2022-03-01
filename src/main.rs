@@ -105,6 +105,7 @@ pub enum GameState {
     Progress,
     Playing,
     Dead,
+    Oldest,
     Exit,
     Intro,
 }
