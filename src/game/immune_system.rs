@@ -15,12 +15,12 @@ pub struct ImmuneSystem {
 }
 
 impl ImmuneSystem {
-    fn new(speed: f32, health: f32) -> ImmuneSystem {
+    fn new(speed: f32, health: f32, attack_spawn_rate: f32) -> ImmuneSystem {
         ImmuneSystem {
             speed,
             health,
             original_health: health,
-            attack_spawn_rate: 1.0,
+            attack_spawn_rate,
         }
     }
 }
@@ -28,6 +28,7 @@ impl ImmuneSystem {
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     let mut speed = 80.0 + 5.0 * global_state.generation as f32;
     let mut health = 10.0 + global_state.generation as f32 / 2.0;
+    let mut attack = 0.0;
     if global_state.has(&Progress::PersonalHygiene) {
         health += 15.0;
     }
@@ -37,6 +38,12 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     if global_state.has(&Progress::PreventiveMeasures) {
         health += 10.0;
         speed += 10.0;
+    }
+    if global_state.has(&Progress::FreeHealthcare) {
+        attack += 0.1;
+    }
+    if global_state.has(&Progress::ParentalLeave) {
+        attack += 0.1;
     }
 
     commands
@@ -65,7 +72,7 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
             ..Default::default()
         })
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(ImmuneSystem::new(speed, health))
+        .insert(ImmuneSystem::new(speed, health, attack))
         .insert(ScreenTag);
 }
 
