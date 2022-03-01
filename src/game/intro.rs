@@ -46,14 +46,12 @@ fn intro(
     mut state: ResMut<State<GameState>>,
     global_state: Res<GlobalState>,
 ) {
-    let (title, body, valid) = if global_state.generation == 0 {
-        (TEXTS[0][0], TEXTS[0][1], TEXTS[0][2])
-    } else if global_state.generation == 1 {
-        (TEXTS[1][0], TEXTS[1][1], TEXTS[1][2])
-    } else if global_state.generation == 2 {
-        (TEXTS[2][0], TEXTS[2][1], TEXTS[2][2])
-    } else if global_state.generation == 4 {
-        (TEXTS[3][0], TEXTS[3][1], TEXTS[3][2])
+    let (title, body, valid) = if global_state.generation < 5 {
+        (
+            TEXTS[global_state.generation][0],
+            TEXTS[global_state.generation][1],
+            TEXTS[global_state.generation][2],
+        )
     } else {
         ("", "", "")
     };
