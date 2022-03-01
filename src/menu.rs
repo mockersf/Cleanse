@@ -112,10 +112,25 @@ fn menu(
                         asset_state.current() != &LoadingState::Assets,
                         false,
                     );
+
+                    let mut progress = LayoutJob::default();
+                    progress.append(
+                        "Progress",
+                        0.0,
+                        TextFormat::simple(egui::TextStyle::Button, Color32::WHITE),
+                    );
+                    if global_state.generation > 4 {
+                        progress.append(
+                            &format!("\npoint: {:.0}", global_state.progress),
+                            0.0,
+                            TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
+                        );
+                    }
+
                     ui.add_space(20.0);
                     button(
                         ui,
-                        "Progress",
+                        progress,
                         || {
                             let _ = state.set(GameState::Progress);
                         },
