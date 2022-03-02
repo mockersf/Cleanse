@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_egui::egui::lerp;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 use strum::IntoEnumIterator;
@@ -145,10 +146,21 @@ pub fn spawn_white_cell(
     mut commands: Commands,
     immune_system: Query<(&RigidBodyPositionComponent, &ImmuneSystem)>,
     time: Res<Time>,
+    host: Res<HostState>,
+    global: Res<GlobalState>,
 ) {
     let (position, immune_system) = immune_system.single();
-    if rand::thread_rng().gen_bool((immune_system.attack_spawn_rate * time.delta_seconds()) as f64)
-    {
+    let rate = if host.age < (global.expectancy / 2.0).min(100.0) {
+        lerp(0.0..=immune_system.attack_spawn_rate, host.age / 100.0)
+    } else if host.age > (global.expectancy * 1.5).max(200.0) {
+        lerp(
+            immune_system.attack_spawn_rate..=(immune_system.attack_spawn_rate * 1.3),
+            (host.age - global.expectancy.max(200.0)) / (300.0 - global.expectancy.max(200.0)),
+        )
+    } else {
+        immune_system.attack_spawn_rate
+    };
+    if rand::thread_rng().gen_bool((rate * time.delta_seconds()) as f64) {
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
