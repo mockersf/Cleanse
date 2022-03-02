@@ -110,7 +110,7 @@ impl Progress {
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
                 layout.append(
-                    "\nResistance improvement",
+                    "\nStrength improvement",
                     0.0,
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
@@ -149,7 +149,7 @@ impl Progress {
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
                 layout.append(
-                    "\nResistance improvement",
+                    "\nStrength improvement",
                     0.0,
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );

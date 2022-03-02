@@ -100,8 +100,8 @@ impl fmt::Display for LevelUp {
         match self {
             LevelUp::Attack => f.pad("Immune response"),
             LevelUp::Speed => f.pad("Blood flow"),
-            LevelUp::TotalHealth => f.pad("Resistance"),
-            LevelUp::CurrentHealth => f.pad("Resistance"),
+            LevelUp::TotalHealth => f.pad("Strength"),
+            LevelUp::CurrentHealth => f.pad("Boost"),
             LevelUp::Regen => f.pad("Healing"),
             LevelUp::Dilatation => f.pad("Blood vessel"),
         }
