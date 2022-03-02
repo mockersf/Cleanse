@@ -278,9 +278,7 @@ fn spawn_cancer_cell(commands: &mut Commands, position: Vec2, replication: f32) 
         })
         .insert(RigidBodyPositionSync::Discrete)
         .insert_bundle((
-            Cancer {
-                replication: replication,
-            },
+            Cancer { replication },
             Pathogen {
                 speed: 0.0,
                 strength: 100.0,
