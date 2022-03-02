@@ -25,6 +25,7 @@ pub struct HostState {
     pub regen: f32,
     pub dilatation: f32,
     pub next_level_up: f32,
+    pub exp: usize,
 }
 
 pub fn aging(
@@ -41,8 +42,8 @@ pub fn aging(
     if host_state.risks.cancer <= 0.1 && host_state.age > 50.0 {
         host_state.risks.cancer += 0.07;
     }
-    if host_state.age > host_state.next_level_up {
-        host_state.next_level_up *= 2.0;
+    if (host_state.age + host_state.exp as f32 * 2.0) > host_state.next_level_up {
+        host_state.next_level_up *= 1.5;
         let _ = state.push(GameState::LevelUp);
     }
     host_state.dilatation += time.delta_seconds() / 2.0;

@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::{
     IntersectionEvent, IntoEntity, RigidBodyForcesComponent, RigidBodyPositionComponent,
 };
 
-use super::{immune_system::ImmuneSystem, pathogens::Pathogen};
+use super::{immune_system::ImmuneSystem, pathogens::Pathogen, HostState};
 
 #[derive(Component)]
 pub struct WhiteCell {
@@ -44,8 +44,10 @@ pub fn attack(
     mut intersection_events: EventReader<IntersectionEvent>,
     white_cells: Query<&WhiteCell>,
     pathogens: Query<&Pathogen>,
+    mut host_state: ResMut<HostState>,
 ) {
     let mut hit = vec![];
+    let mut destroyed = 0;
     for event in intersection_events.iter() {
         if event.intersecting {
             let e1 = event.collider1.entity();
@@ -72,9 +74,11 @@ pub fn attack(
             if white_cell.1.strength > pathogen.1.strength {
                 commands.entity(white_cell.0).despawn_recursive();
                 commands.entity(pathogen.0).despawn_recursive();
+                destroyed += 1;
             } else {
                 commands.entity(white_cell.0).despawn_recursive();
             }
         }
     }
+    host_state.exp += destroyed;
 }

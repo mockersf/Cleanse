@@ -106,6 +106,7 @@ fn setup(
         regen,
         dilatation,
         next_level_up: 25.0,
+        exp: 0,
     });
 
     let _ = state.push(GameState::Intro);
