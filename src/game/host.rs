@@ -45,6 +45,7 @@ pub fn aging(
         host_state.next_level_up *= 2.0;
         let _ = state.push(GameState::LevelUp);
     }
+    host_state.dilatation += time.delta_seconds() / 2.0;
 }
 
 pub fn state_update(

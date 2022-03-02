@@ -80,7 +80,7 @@ fn setup(
     let mut bacteria = 1.6;
     let mut virus = 1.6;
     let mut cancer = 0.0;
-    let mut regen = 0.0;
+    let mut regen = global_state.generation as f32 / 100.0;
     let mut dilatation = 500.0 + global_state.generation as f32 * 5.0;
     let mut effect = Effect::default();
     for progress in Progress::iter() {
