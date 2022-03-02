@@ -15,7 +15,7 @@ use self::{
 pub mod host;
 mod immune_system;
 mod intro;
-mod levelup;
+pub mod levelup;
 mod oldest;
 mod pathogens;
 pub mod tissue;
@@ -59,8 +59,9 @@ impl Plugin for GamePlugin {
 pub mod z_layers {
     pub const BLOODFIELD: f32 = 0.0;
     pub const TISSUE: f32 = 1.0;
-    pub const IMMUNE_SYSTEM: f32 = 2.0;
-    pub const PATHOGEN: f32 = 3.0;
+    pub const PATHOGEN: f32 = 2.0;
+    pub const CANCER: f32 = 3.0;
+    pub const IMMUNE_SYSTEM: f32 = 4.0;
 }
 
 #[derive(Component)]

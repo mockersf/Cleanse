@@ -248,7 +248,7 @@ pub fn cancer_replication(
 fn spawn_cancer_cell(commands: &mut Commands, position: Vec2, replication: f32) {
     commands
         .spawn_bundle(SpriteBundle {
-            transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
+            transform: Transform::from_translation(position.extend(z_layers::CANCER)),
             sprite: Sprite {
                 color: Color::BLACK,
                 custom_size: Some(Vec2::new(20.0, 20.0)),
