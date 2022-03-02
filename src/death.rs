@@ -27,11 +27,12 @@ impl Plugin for DeathPlugin {
     }
 }
 
-const TEXT: [&str; 5] = [
+const TEXT: [&str; 6] = [
     "Already?",
     "Good news! You'll get stronger\nwith each generation.",
-    "Seems harder than expected.\nLet's see if you can get an...\nunfair advantage.",
+    "Seems harder than expected.\nLet's see if you could get...\nan unfair advantage.",
     "Unlocked Progress!\nCheck out what you can get.",
+    "Oh, and don't worry about\nthe white cells.\nThat's your immune system\nfinally kicking back!",
     "That was inevitable.",
 ];
 
@@ -41,10 +42,10 @@ fn death(
     host_state: Res<HostState>,
     mut global_state: ResMut<GlobalState>,
 ) {
-    let text = if global_state.generation < 4 {
+    let text = if global_state.generation < 5 {
         TEXT[global_state.generation]
     } else {
-        TEXT[4]
+        TEXT[5]
     };
     egui::Window::new(RichText::new("Death").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
