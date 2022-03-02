@@ -32,8 +32,8 @@ impl ImmuneSystem {
 
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     let mut speed = 70.0 + 4.0 * global_state.generation as f32;
-    let mut health = 10.0 + global_state.generation as f32 / 2.0;
-    let mut attack = global_state.generation as f32 / 180.0;
+    let mut health = 10.0 + global_state.generation as f32 / 2.0 + global_state.progress / 700.0;
+    let mut attack = global_state.generation as f32 / 180.0 + global_state.progress / 5000.0;
     let mut effect = Effect::default();
     for progress in Progress::iter() {
         if global_state.has(&progress) {
