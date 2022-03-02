@@ -30,7 +30,9 @@ pub fn spawn(
     windows: Res<Windows>,
 ) {
     let mut rng = rand::thread_rng();
-    if rng.gen_bool((state.risks.bacteria * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+    if rng.gen_bool(
+        ((state.risks.bacteria + state.age / 600.0) * time.delta_seconds()).clamp(0.0, 1.0) as f64,
+    ) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         let position = std::iter::repeat_with(|| {
@@ -77,7 +79,9 @@ pub fn spawn(
                 ScreenTag,
             ));
     }
-    if rng.gen_bool((state.risks.virus * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+    if rng.gen_bool(
+        ((state.risks.virus + state.age / 600.0) * time.delta_seconds()).clamp(0.0, 1.0) as f64,
+    ) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         let position = std::iter::repeat_with(|| {

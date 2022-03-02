@@ -121,7 +121,7 @@ fn menu(
                     );
                     if global_state.generation > 4 {
                         progress.append(
-                            &format!("\npoint: {:.0}", global_state.progress),
+                            &format!("\npoint: {:.0}", global_state.progress.floor()),
                             0.0,
                             TextFormat::simple(egui::TextStyle::Small, Color32::GRAY),
                         );

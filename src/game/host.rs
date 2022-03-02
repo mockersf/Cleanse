@@ -10,6 +10,7 @@ pub enum Status {
     Dead,
 }
 
+#[derive(Debug)]
 pub struct Risks {
     pub bacteria: f32,
     pub virus: f32,
@@ -23,6 +24,7 @@ pub struct HostState {
     pub sickness: f32,
     pub regen: f32,
     pub dilatation: f32,
+    pub next_level_up: f32,
 }
 
 pub fn aging(
@@ -36,8 +38,12 @@ pub fn aging(
         let _ = state.push(GameState::Oldest);
         *oldest = true;
     }
-    if host_state.risks.cancer == 0.0 && host_state.age > 50.0 {
+    if host_state.risks.cancer <= 0.1 && host_state.age > 50.0 {
         host_state.risks.cancer += 0.08;
+    }
+    if host_state.age > host_state.next_level_up {
+        host_state.next_level_up *= 2.0;
+        let _ = state.push(GameState::LevelUp);
     }
 }
 

@@ -104,6 +104,7 @@ pub enum GameState {
     Cheat,
     Progress,
     Playing,
+    LevelUp,
     Dead,
     Oldest,
     Exit,

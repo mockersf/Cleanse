@@ -11,6 +11,7 @@ use self::{
 mod host;
 mod immune_system;
 mod intro;
+mod levelup;
 mod oldest;
 mod pathogens;
 pub mod tissue;
@@ -30,6 +31,7 @@ impl Plugin for GamePlugin {
         .add_plugin(tissue::TissuePlugin)
         .add_plugin(intro::IntroPlugin)
         .add_plugin(oldest::OldestPlugin)
+        .add_plugin(levelup::LevelUpPlugin)
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(state_management)
@@ -71,8 +73,8 @@ fn setup(
         transform.translation.y = 0.0;
     }
 
-    let mut bacteria = 2.0;
-    let mut virus = 1.5;
+    let mut bacteria = 1.6;
+    let mut virus = 1.6;
     let mut cancer = 0.0;
     let mut regen = 0.0;
     let mut dilatation = 500.0 + global_state.generation as f32 * 5.0;
@@ -87,13 +89,14 @@ fn setup(
         virus -= 0.5;
     }
     if global_state.has(&Progress::PersonalHygiene) {
-        bacteria -= 0.15;
-        virus -= 0.15;
+        bacteria -= 0.2;
+        virus -= 0.2;
         regen += 0.15;
     }
     if global_state.has(&Progress::Sanitation) {
-        bacteria -= 0.2;
+        bacteria -= 0.4;
         virus -= 0.2;
+        regen += 0.15;
     }
     if global_state.has(&Progress::PreventiveMeasures) {
         bacteria -= 0.2;
@@ -112,14 +115,15 @@ fn setup(
     commands.insert_resource(HostState {
         age: 0.0,
         status: Status::Healthy,
-        risks: Risks {
+        risks: dbg!(Risks {
             bacteria,
             virus,
             cancer,
-        },
+        }),
         sickness: 0.0,
         regen,
         dilatation,
+        next_level_up: 25.0,
     });
 
     let _ = state.push(GameState::Intro);

@@ -33,6 +33,12 @@ pub struct ProgressAssets {
     pub free_healthcare: Handle<Image>,
     #[asset(path = "sprites/parental-leave.png")]
     pub parental_leave: Handle<Image>,
+    #[asset(path = "sprites/parental-leave.png")]
+    pub levelup_speed: Handle<Image>,
+    #[asset(path = "sprites/parental-leave.png")]
+    pub levelup_attack: Handle<Image>,
+    #[asset(path = "sprites/parental-leave.png")]
+    pub levelup_health: Handle<Image>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

@@ -39,6 +39,9 @@ impl Plugin for TissuePlugin {
                 SystemSet::on_update(GameState::Oldest).with_system(update_tissue_material),
             )
             .add_system_set(
+                SystemSet::on_update(GameState::LevelUp).with_system(update_tissue_material),
+            )
+            .add_system_set(
                 SystemSet::on_update(GameState::Playing).with_system(update_tissue_material),
             );
     }

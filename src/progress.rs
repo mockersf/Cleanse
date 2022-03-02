@@ -27,6 +27,9 @@ pub enum Progress {
     SickDays,
     FreeHealthcare,
     ParentalLeave,
+    LevelUpSpeed,
+    LevelUpAttack,
+    LevelUpHealth,
 }
 
 impl fmt::Display for Progress {
@@ -41,12 +44,15 @@ impl fmt::Display for Progress {
             Progress::SickDays => f.pad("Sick Days"),
             Progress::FreeHealthcare => f.pad("Free Healthcare"),
             Progress::ParentalLeave => f.pad("Parental Leave"),
+            Progress::LevelUpSpeed => f.pad("Speed"),
+            Progress::LevelUpAttack => f.pad("Attack"),
+            Progress::LevelUpHealth => f.pad("Health"),
         }
     }
 }
 
 impl Progress {
-    const fn to_image_id(&self) -> u64 {
+    pub const fn to_image_id(&self) -> u64 {
         match self {
             Progress::Disinfectant => 0,
             Progress::Antibiotics => 1,
@@ -57,6 +63,9 @@ impl Progress {
             Progress::SickDays => 6,
             Progress::FreeHealthcare => 7,
             Progress::ParentalLeave => 8,
+            Progress::LevelUpSpeed => 9,
+            Progress::LevelUpAttack => 10,
+            Progress::LevelUpHealth => 11,
         }
     }
 }
@@ -100,6 +109,18 @@ fn setup(
             Progress::ParentalLeave.to_image_id(),
             assets.parental_leave.clone_weak(),
         );
+        egui_context.set_egui_texture(
+            Progress::LevelUpSpeed.to_image_id(),
+            assets.levelup_speed.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::LevelUpAttack.to_image_id(),
+            assets.levelup_attack.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::LevelUpHealth.to_image_id(),
+            assets.levelup_health.clone_weak(),
+        );
 
         *done = true;
     }
@@ -117,6 +138,7 @@ impl Progress {
             Progress::SickDays => (100, 5),
             Progress::FreeHealthcare => (100, 10),
             Progress::ParentalLeave => (100, 20),
+            _ => (0, 0),
         }
     }
 }
@@ -133,6 +155,7 @@ impl GlobalState {
             Progress::SickDays => self.sick_days != usize::MAX,
             Progress::FreeHealthcare => self.free_healthcare != usize::MAX,
             Progress::ParentalLeave => self.parental_leave != usize::MAX,
+            _ => false,
         }
     }
 
@@ -147,6 +170,7 @@ impl GlobalState {
             Progress::SickDays => self.sick_days = self.generation,
             Progress::FreeHealthcare => self.free_healthcare = self.generation,
             Progress::ParentalLeave => self.parental_leave = self.generation,
+            _ => (),
         }
     }
 
@@ -168,7 +192,10 @@ fn progress(
         .min_width(800.0)
         .show(egui_context.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
-                ui.strong(format!("Progress Points: {:.0}", global_state.progress));
+                ui.strong(format!(
+                    "Progress Points: {:.0}",
+                    global_state.progress.floor()
+                ));
                 ui.separator();
 
                 ui.horizontal(|ui| {
