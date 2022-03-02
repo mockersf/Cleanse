@@ -9,6 +9,7 @@ use bevy_egui::{
 
 use crate::{
     assets::{LoadingState, ProgressAssets},
+    game::levelup::LevelUp,
     progress::Progress,
     tear_down, GameState, GlobalState,
 };
@@ -111,16 +112,28 @@ fn setup(
             assets.parental_leave.clone_weak(),
         );
         egui_context.set_egui_texture(
-            Progress::LevelUpSpeed.to_image_id(),
+            LevelUp::Speed.to_image_id(),
             assets.levelup_speed.clone_weak(),
         );
         egui_context.set_egui_texture(
-            Progress::LevelUpAttack.to_image_id(),
+            LevelUp::Attack.to_image_id(),
             assets.levelup_attack.clone_weak(),
         );
         egui_context.set_egui_texture(
-            Progress::LevelUpHealth.to_image_id(),
-            assets.levelup_health.clone_weak(),
+            LevelUp::TotalHealth.to_image_id(),
+            assets.levelup_total_health.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            LevelUp::CurrentHealth.to_image_id(),
+            assets.levelup_current_health.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            LevelUp::Dilatation.to_image_id(),
+            assets.levelup_dilatation.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            LevelUp::Regen.to_image_id(),
+            assets.levelup_regen.clone_weak(),
         );
         *done = true;
     }

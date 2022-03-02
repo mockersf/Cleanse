@@ -31,9 +31,6 @@ pub enum Progress {
     SickDays,
     FreeHealthcare,
     ParentalLeave,
-    LevelUpSpeed,
-    LevelUpAttack,
-    LevelUpHealth,
 }
 
 impl fmt::Display for Progress {
@@ -48,9 +45,6 @@ impl fmt::Display for Progress {
             Progress::SickDays => f.pad("Sick Days"),
             Progress::FreeHealthcare => f.pad("Free Healthcare"),
             Progress::ParentalLeave => f.pad("Parental Leave"),
-            Progress::LevelUpSpeed => f.pad("Blood flow"),
-            Progress::LevelUpAttack => f.pad("Immune response"),
-            Progress::LevelUpHealth => f.pad("Resistance"),
         }
     }
 }
@@ -67,9 +61,6 @@ impl Progress {
             Progress::SickDays => 6,
             Progress::FreeHealthcare => 7,
             Progress::ParentalLeave => 8,
-            Progress::LevelUpSpeed => 9,
-            Progress::LevelUpAttack => 10,
-            Progress::LevelUpHealth => 11,
         }
     }
 
@@ -229,9 +220,6 @@ impl Progress {
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
             }
-            Progress::LevelUpSpeed => {}
-            Progress::LevelUpAttack => {}
-            Progress::LevelUpHealth => {}
         }
         layout.into()
     }
@@ -249,7 +237,6 @@ impl Progress {
             Progress::SickDays => (100, 5),
             Progress::FreeHealthcare => (100, 10),
             Progress::ParentalLeave => (100, 20),
-            _ => (0, 0),
         }
     }
 }
@@ -314,9 +301,6 @@ impl Effect {
                 self.cancer -= 0.015;
                 self.regen += 0.1;
             }
-            Progress::LevelUpSpeed => (),
-            Progress::LevelUpAttack => (),
-            Progress::LevelUpHealth => (),
         }
     }
 }
@@ -333,7 +317,6 @@ impl GlobalState {
             Progress::SickDays => self.sick_days != usize::MAX,
             Progress::FreeHealthcare => self.free_healthcare != usize::MAX,
             Progress::ParentalLeave => self.parental_leave != usize::MAX,
-            _ => false,
         }
     }
 
@@ -348,7 +331,6 @@ impl GlobalState {
             Progress::SickDays => self.sick_days = self.generation,
             Progress::FreeHealthcare => self.free_healthcare = self.generation,
             Progress::ParentalLeave => self.parental_leave = self.generation,
-            _ => (),
         }
     }
 
