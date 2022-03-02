@@ -34,6 +34,9 @@ impl Plugin for BloodfieldPlugin {
                 SystemSet::on_update(GameState::Menu).with_system(update_bloodfield_material),
             )
             .add_system_set(
+                SystemSet::on_update(GameState::Progress).with_system(update_bloodfield_material),
+            )
+            .add_system_set(
                 SystemSet::on_update(GameState::Cheat).with_system(update_bloodfield_material),
             );
     }
