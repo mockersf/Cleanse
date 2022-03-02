@@ -30,12 +30,12 @@ const TEXTS: [[&str; 3]; 5] = [
     ],
     [
         "Should have mentionned...",
-        "The blood flow is the red at the center.",
+        "The blood flow is the red\nzone at the center.",
         "Oh, OK.",
     ],
     [
         "A normal life expectancy?",
-        "That's like, 300 years old. Totally doable, just dodge those pathogens.",
+        "That's like, 300 years old.\nTotally doable, just dodge those pathogens.",
         "I'm... almost there?",
     ],
     ["Well", "You're on your own now!", "I got all I need."],
