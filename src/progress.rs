@@ -354,7 +354,7 @@ impl GlobalState {
 
     fn cost(&self, progress: &Progress) -> usize {
         progress.base_and_factor().0
-            + progress.base_and_factor().1 * (self.current_progress_multiplier() + 2)
+            + progress.base_and_factor().1 * (self.current_progress_multiplier() * 2 / 3 + 2)
     }
 }
 
