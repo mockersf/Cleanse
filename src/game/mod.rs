@@ -71,28 +71,29 @@ fn setup(
         transform.translation.y = 0.0;
     }
 
-    let mut bacteria = 1.0;
-    let mut virus = 1.0;
+    let mut bacteria = 2.0;
+    let mut virus = 1.5;
+    let mut cancer = 0.0;
     let mut regen = 0.0;
     let mut dilatation = 500.0 + global_state.generation as f32 * 5.0;
     if global_state.has(&Progress::Disinfectant) {
-        bacteria -= 0.1;
-        virus -= 0.1;
+        bacteria -= 0.2;
+        virus -= 0.2;
     }
     if global_state.has(&Progress::Antibiotics) {
-        regen += 0.2;
+        regen += 0.3;
     }
     if global_state.has(&Progress::Vaccine) {
-        virus -= 0.3;
+        virus -= 0.5;
     }
     if global_state.has(&Progress::PersonalHygiene) {
-        bacteria -= 0.1;
-        virus -= 0.1;
-        regen += 0.1;
-    }
-    if global_state.has(&Progress::Sanitation) {
         bacteria -= 0.15;
         virus -= 0.15;
+        regen += 0.15;
+    }
+    if global_state.has(&Progress::Sanitation) {
+        bacteria -= 0.2;
+        virus -= 0.2;
     }
     if global_state.has(&Progress::PreventiveMeasures) {
         bacteria -= 0.2;
@@ -100,9 +101,12 @@ fn setup(
     }
     if global_state.has(&Progress::SickDays) {
         dilatation += 200.0;
+        bacteria -= 0.15;
+        virus -= 0.1;
     }
     if global_state.has(&Progress::FreeHealthcare) {
         dilatation += 200.0;
+        cancer -= 0.02;
     }
 
     commands.insert_resource(HostState {
@@ -111,7 +115,7 @@ fn setup(
         risks: Risks {
             bacteria,
             virus,
-            cancer: 0.0,
+            cancer,
         },
         sickness: 0.0,
         regen,

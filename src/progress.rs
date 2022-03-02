@@ -113,10 +113,10 @@ impl Progress {
             Progress::Vaccine => (25, 5),
             Progress::PersonalHygiene => (50, 5),
             Progress::Sanitation => (50, 10),
-            Progress::PreventiveMeasures => (50, 25),
-            Progress::SickDays => (100, 25),
-            Progress::FreeHealthcare => (100, 50),
-            Progress::ParentalLeave => (100, 100),
+            Progress::PreventiveMeasures => (50, 15),
+            Progress::SickDays => (100, 5),
+            Progress::FreeHealthcare => (100, 10),
+            Progress::ParentalLeave => (100, 20),
         }
     }
 }
