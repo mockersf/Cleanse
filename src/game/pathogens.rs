@@ -140,7 +140,7 @@ pub fn spawn(
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
                     color: Color::BLACK,
-                    custom_size: Some(Vec2::new(20.0, 20.0)),
+                    custom_size: Some(Vec2::new(8.0, 8.0)),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -156,13 +156,13 @@ pub fn spawn(
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
-                mass_properties: ColliderMassProps::Density(10.0).into(),
-                shape: ColliderShape::ball(8.0).into(),
+                mass_properties: ColliderMassProps::Density(100.0).into(),
+                shape: ColliderShape::ball(4.0).into(),
                 ..Default::default()
             })
             .insert(RigidBodyPositionSync::Discrete)
             .insert_bundle((
-                Cancer { replication: 0.1 },
+                Cancer { replication: 0.12 },
                 Pathogen {
                     speed: 0.0,
                     strength: 100.0,
@@ -260,13 +260,13 @@ pub fn cancer_replication(
                 + Vec2::new(
                     time.seconds_since_startup().sin() as f32,
                     time.seconds_since_startup().cos() as f32,
-                ) * 5.0;
+                ) * 4.0;
             commands
                 .spawn_bundle(SpriteBundle {
                     transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                     sprite: Sprite {
                         color: Color::BLACK,
-                        custom_size: Some(Vec2::new(20.0, 20.0)),
+                        custom_size: Some(Vec2::new(8.0, 8.0)),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -282,13 +282,13 @@ pub fn cancer_replication(
                     ..Default::default()
                 })
                 .insert_bundle(ColliderBundle {
-                    mass_properties: ColliderMassProps::Density(10.0).into(),
-                    shape: ColliderShape::ball(8.0).into(),
+                    mass_properties: ColliderMassProps::Density(100.0).into(),
+                    shape: ColliderShape::ball(4.0).into(),
                     ..Default::default()
                 })
                 .insert(RigidBodyPositionSync::Discrete)
                 .insert_bundle((
-                    Cancer { replication: 0.1 },
+                    Cancer { replication: 0.08 },
                     Pathogen {
                         speed: 0.0,
                         strength: 100.0,
