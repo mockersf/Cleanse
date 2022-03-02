@@ -45,6 +45,7 @@ pub fn attack(
     white_cells: Query<&WhiteCell>,
     pathogens: Query<&Pathogen>,
 ) {
+    let mut hit = vec![];
     for event in intersection_events.iter() {
         if event.intersecting {
             let e1 = event.collider1.entity();
@@ -64,6 +65,10 @@ pub fn attack(
             } else {
                 continue;
             };
+            if hit.contains(&pathogen.0) {
+                continue;
+            }
+            hit.push(pathogen.0);
             if white_cell.1.strength > pathogen.1.strength {
                 commands.entity(white_cell.0).despawn_recursive();
                 commands.entity(pathogen.0).despawn_recursive();
