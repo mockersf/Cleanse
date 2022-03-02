@@ -25,12 +25,12 @@ const TEXTS: [[&str; 3]; 5] = [
     ["Welcome", "Just avoid contamination.", "Sounds easy!"],
     [
         "Welcome back!",
-        "Stay in the blood flow!\nYou're stronger there.",
+        "Stay in the blood vessel!\nYou're stronger there.",
         "That should help.",
     ],
     [
         "Should have mentionned...",
-        "The blood flow is the red\nzone at the center.",
+        "The blood vessel is the red\nzone at the center.",
         "Oh, OK.",
     ],
     [

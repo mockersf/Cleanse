@@ -176,7 +176,7 @@ impl Progress {
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
                 layout.append(
-                    "\nVessel improvement",
+                    "\nBlood vessel improvement",
                     0.0,
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
@@ -198,7 +198,7 @@ impl Progress {
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
                 layout.append(
-                    "\nVessel improvement",
+                    "\nBlood vessel improvement",
                     0.0,
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
