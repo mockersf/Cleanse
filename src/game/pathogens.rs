@@ -11,6 +11,11 @@ pub struct Bacteria;
 pub struct Virus;
 
 #[derive(Component)]
+pub struct Cancer {
+    replication: f32,
+}
+
+#[derive(Component)]
 pub struct Pathogen {
     pub strength: f32,
     speed: f32,
@@ -119,6 +124,54 @@ pub fn spawn(
                 ScreenTag,
             ));
     }
+    if rng.gen_bool((state.risks.cancer * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+        let window = windows.get_primary().unwrap();
+        let (width, height) = (window.width() * 0.985, window.height() * 0.975);
+        let position = std::iter::repeat_with(|| {
+            Vec2::new(
+                rng.gen_range((-width / 2.0)..(width / 2.0)),
+                rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
+            )
+        })
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
+        .unwrap();
+        commands
+            .spawn_bundle(SpriteBundle {
+                transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
+                sprite: Sprite {
+                    color: Color::BLACK,
+                    custom_size: Some(Vec2::new(20.0, 20.0)),
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
+            .insert_bundle(RigidBodyBundle {
+                position: position.into(),
+                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
+                damping: RigidBodyDamping {
+                    linear_damping: 100.0,
+                    angular_damping: 100.0,
+                }
+                .into(),
+                ..Default::default()
+            })
+            .insert_bundle(ColliderBundle {
+                mass_properties: ColliderMassProps::Density(10.0).into(),
+                shape: ColliderShape::ball(8.0).into(),
+                ..Default::default()
+            })
+            .insert(RigidBodyPositionSync::Discrete)
+            .insert_bundle((
+                Cancer { replication: 0.1 },
+                Pathogen {
+                    speed: 0.0,
+                    strength: 100.0,
+                    last_hit: Timer::from_seconds(1.0, true),
+                    in_contact: false,
+                },
+                ScreenTag,
+            ));
+    }
 }
 
 pub fn movements(
@@ -190,6 +243,60 @@ pub fn refresh_hit(
         if pathogen.last_hit.tick(time.delta()).just_finished() && pathogen.in_contact {
             let mut immune_system = immune_system.single_mut();
             immune_system.health -= pathogen.strength;
+        }
+    }
+}
+
+pub fn cancer_replication(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut cancer_cells: Query<(&Transform, &mut Cancer)>,
+) {
+    let mut rng = rand::thread_rng();
+    for (transform, mut cancer) in cancer_cells.iter_mut() {
+        if rng.gen_bool((cancer.replication * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+            cancer.replication = cancer.replication / 2.0;
+            let position = transform.translation.truncate()
+                + Vec2::new(
+                    time.seconds_since_startup().sin() as f32,
+                    time.seconds_since_startup().cos() as f32,
+                ) * 5.0;
+            commands
+                .spawn_bundle(SpriteBundle {
+                    transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
+                    sprite: Sprite {
+                        color: Color::BLACK,
+                        custom_size: Some(Vec2::new(20.0, 20.0)),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .insert_bundle(RigidBodyBundle {
+                    position: position.into(),
+                    mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
+                    damping: RigidBodyDamping {
+                        linear_damping: 100.0,
+                        angular_damping: 100.0,
+                    }
+                    .into(),
+                    ..Default::default()
+                })
+                .insert_bundle(ColliderBundle {
+                    mass_properties: ColliderMassProps::Density(10.0).into(),
+                    shape: ColliderShape::ball(8.0).into(),
+                    ..Default::default()
+                })
+                .insert(RigidBodyPositionSync::Discrete)
+                .insert_bundle((
+                    Cancer { replication: 0.1 },
+                    Pathogen {
+                        speed: 0.0,
+                        strength: 100.0,
+                        last_hit: Timer::from_seconds(1.0, true),
+                        in_contact: false,
+                    },
+                    ScreenTag,
+                ));
         }
     }
 }

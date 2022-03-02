@@ -13,6 +13,7 @@ pub enum Status {
 pub struct Risks {
     pub bacteria: f32,
     pub virus: f32,
+    pub cancer: f32,
 }
 
 pub struct HostState {
@@ -34,6 +35,9 @@ pub fn aging(
     if !*oldest && host_state.age > 300.0 {
         let _ = state.push(GameState::Oldest);
         *oldest = true;
+    }
+    if host_state.risks.cancer == 0.0 && host_state.age > 50.0 {
+        host_state.risks.cancer = 0.1;
     }
 }
 

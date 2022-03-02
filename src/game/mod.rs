@@ -42,6 +42,7 @@ impl Plugin for GamePlugin {
                 .with_system(pathogens::movements)
                 .with_system(pathogens::collisions)
                 .with_system(pathogens::refresh_hit)
+                .with_system(pathogens::cancer_replication)
                 .with_system(white_cells::movements)
                 .with_system(white_cells::attack)
                 .with_system(ui::status),
@@ -107,7 +108,11 @@ fn setup(
     commands.insert_resource(HostState {
         age: 0.0,
         status: Status::Healthy,
-        risks: Risks { bacteria, virus },
+        risks: Risks {
+            bacteria,
+            virus,
+            cancer: 0.0,
+        },
         sickness: 0.0,
         regen,
         dilatation,
