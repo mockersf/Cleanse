@@ -255,7 +255,7 @@ pub fn cancer_replication(
     let mut rng = rand::thread_rng();
     for (transform, mut cancer) in cancer_cells.iter_mut() {
         if rng.gen_bool((cancer.replication * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
-            cancer.replication = cancer.replication / 2.0;
+            cancer.replication /= 2.0;
             let position = transform.translation.truncate()
                 + Vec2::new(
                     time.seconds_since_startup().sin() as f32,
