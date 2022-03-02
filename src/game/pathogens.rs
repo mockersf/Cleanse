@@ -240,7 +240,7 @@ pub fn cancer_replication(
                     time.seconds_since_startup().sin() as f32,
                     time.seconds_since_startup().cos() as f32,
                 ) * 4.0;
-            spawn_cancer_cell(&mut commands, position, 0.03);
+            spawn_cancer_cell(&mut commands, position, 0.04);
         }
     }
 }
@@ -268,7 +268,7 @@ fn spawn_cancer_cell(commands: &mut Commands, position: Vec2, replication: f32) 
         })
         .insert_bundle(ColliderBundle {
             mass_properties: ColliderMassProps::Density(100.0).into(),
-            shape: ColliderShape::ball(10.0).into(),
+            shape: ColliderShape::ball(8.0).into(),
             flags: ColliderFlags {
                 solver_groups: InteractionGroups::new(2, 2),
                 ..Default::default()
@@ -280,8 +280,8 @@ fn spawn_cancer_cell(commands: &mut Commands, position: Vec2, replication: f32) 
         .insert_bundle((
             Cancer { replication },
             Pathogen {
-                speed: 0.0,
-                strength: 100.0,
+                speed: -500.0,
+                strength: 1000.0,
                 last_hit: Timer::from_seconds(1.0, true),
                 in_contact: false,
             },
