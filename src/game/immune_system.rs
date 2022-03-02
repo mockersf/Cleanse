@@ -1,8 +1,12 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
+use strum::IntoEnumIterator;
 
-use crate::{progress::Progress, GlobalState};
+use crate::{
+    progress::{Effect, Progress},
+    GlobalState,
+};
 
 use super::{white_cells::WhiteCell, z_layers, HostState, ScreenTag};
 
@@ -28,23 +32,16 @@ impl ImmuneSystem {
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     let mut speed = 70.0 + 4.0 * global_state.generation as f32;
     let mut health = 10.0 + global_state.generation as f32 / 2.0;
-    let mut attack = 0.0;
-    if global_state.has(&Progress::PersonalHygiene) {
-        health += 15.0;
+    let mut attack = global_state.generation as f32 / 180.0;
+    let mut effect = Effect::default();
+    for progress in Progress::iter() {
+        if global_state.has(&progress) {
+            effect.apply(progress);
+        }
     }
-    if global_state.has(&Progress::Sanitation) {
-        speed += 10.0;
-    }
-    if global_state.has(&Progress::PreventiveMeasures) {
-        health += 10.0;
-        speed += 5.0;
-    }
-    if global_state.has(&Progress::FreeHealthcare) {
-        attack += 0.1;
-    }
-    if global_state.has(&Progress::ParentalLeave) {
-        attack += 0.1;
-    }
+    speed += effect.speed;
+    health += effect.health;
+    attack += effect.attack;
 
     commands
         .spawn_bundle(SpriteBundle {

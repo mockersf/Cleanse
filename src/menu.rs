@@ -7,7 +7,11 @@ use bevy_egui::{
     EguiContext,
 };
 
-use crate::{assets::LoadingState, tear_down, GameState, GlobalState};
+use crate::{
+    assets::{LoadingState, ProgressAssets},
+    progress::Progress,
+    tear_down, GameState, GlobalState,
+};
 
 pub struct MenuPlugin;
 
@@ -22,7 +26,11 @@ impl Plugin for MenuPlugin {
 #[derive(Component)]
 struct ScreenTag;
 
-fn setup(mut egui_context: ResMut<EguiContext>, mut done: Local<bool>) {
+fn setup(
+    mut egui_context: ResMut<EguiContext>,
+    assets: Res<ProgressAssets>,
+    mut done: Local<bool>,
+) {
     if !*done {
         debug!("Loading Screen");
 
@@ -68,6 +76,52 @@ fn setup(mut egui_context: ResMut<EguiContext>, mut done: Local<bool>) {
             .and_modify(|f| f.1 = 15.0);
 
         ctx.set_fonts(fonts);
+
+        egui_context.set_egui_texture(
+            Progress::Disinfectant.to_image_id(),
+            assets.disinfectant.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::Antibiotics.to_image_id(),
+            assets.antibiotics.clone_weak(),
+        );
+        egui_context.set_egui_texture(Progress::Vaccine.to_image_id(), assets.vaccine.clone_weak());
+        egui_context.set_egui_texture(
+            Progress::Sanitation.to_image_id(),
+            assets.sanitation.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::PersonalHygiene.to_image_id(),
+            assets.personal_hygiene.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::PreventiveMeasures.to_image_id(),
+            assets.preventive_measures.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::SickDays.to_image_id(),
+            assets.sick_days.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::FreeHealthcare.to_image_id(),
+            assets.free_healthcare.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::ParentalLeave.to_image_id(),
+            assets.parental_leave.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::LevelUpSpeed.to_image_id(),
+            assets.levelup_speed.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::LevelUpAttack.to_image_id(),
+            assets.levelup_attack.clone_weak(),
+        );
+        egui_context.set_egui_texture(
+            Progress::LevelUpHealth.to_image_id(),
+            assets.levelup_health.clone_weak(),
+        );
         *done = true;
     }
 }

@@ -2,21 +2,25 @@ use std::fmt::{self, Formatter};
 
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, Align2, Color32, ImageButton, Layout, RichText, Ui, Widget},
+    egui::{
+        self, text::LayoutJob, Align2, Color32, ImageButton, Layout, RichText, TextFormat, Ui,
+        Widget, WidgetText,
+    },
     EguiContext,
 };
+use strum::EnumIter;
 
-use crate::{assets::ProgressAssets, menu::button, GameState, GlobalState};
+use crate::{menu::button, GameState, GlobalState};
 
 pub struct ProgressPlugin;
 
 impl Plugin for ProgressPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Progress).with_system(setup))
-            .add_system_set(SystemSet::on_update(GameState::Progress).with_system(progress));
+        app.add_system_set(SystemSet::on_update(GameState::Progress).with_system(progress));
     }
 }
 
+#[derive(EnumIter)]
 pub enum Progress {
     Disinfectant,
     Antibiotics,
@@ -44,9 +48,9 @@ impl fmt::Display for Progress {
             Progress::SickDays => f.pad("Sick Days"),
             Progress::FreeHealthcare => f.pad("Free Healthcare"),
             Progress::ParentalLeave => f.pad("Parental Leave"),
-            Progress::LevelUpSpeed => f.pad("Speed"),
-            Progress::LevelUpAttack => f.pad("Attack"),
-            Progress::LevelUpHealth => f.pad("Health"),
+            Progress::LevelUpSpeed => f.pad("Blood flow"),
+            Progress::LevelUpAttack => f.pad("Immune response"),
+            Progress::LevelUpHealth => f.pad("Resistance"),
         }
     }
 }
@@ -68,61 +72,168 @@ impl Progress {
             Progress::LevelUpHealth => 11,
         }
     }
-}
 
-fn setup(
-    mut egui_context: ResMut<EguiContext>,
-    assets: Res<ProgressAssets>,
-    mut done: Local<bool>,
-) {
-    if !*done {
-        egui_context.set_egui_texture(
-            Progress::Disinfectant.to_image_id(),
-            assets.disinfectant.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::Antibiotics.to_image_id(),
-            assets.antibiotics.clone_weak(),
-        );
-        egui_context.set_egui_texture(Progress::Vaccine.to_image_id(), assets.vaccine.clone_weak());
-        egui_context.set_egui_texture(
-            Progress::Sanitation.to_image_id(),
-            assets.sanitation.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::PersonalHygiene.to_image_id(),
-            assets.personal_hygiene.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::PreventiveMeasures.to_image_id(),
-            assets.preventive_measures.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::SickDays.to_image_id(),
-            assets.sick_days.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::FreeHealthcare.to_image_id(),
-            assets.free_healthcare.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::ParentalLeave.to_image_id(),
-            assets.parental_leave.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::LevelUpSpeed.to_image_id(),
-            assets.levelup_speed.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::LevelUpAttack.to_image_id(),
-            assets.levelup_attack.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::LevelUpHealth.to_image_id(),
-            assets.levelup_health.clone_weak(),
-        );
-
-        *done = true;
+    pub fn details(&self) -> WidgetText {
+        let mut layout = LayoutJob::default();
+        match self {
+            Progress::Disinfectant => {
+                layout.append(
+                    "Bacteria risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVirus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::Antibiotics => {
+                layout.append(
+                    "Healing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::Vaccine => {
+                layout.append(
+                    "Large virus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::Sanitation => {
+                layout.append(
+                    "Bacteria risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVirus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nHealing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nResistance improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::PersonalHygiene => {
+                layout.append(
+                    "Bacteria risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVirus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nHealing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nBlood flow improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::PreventiveMeasures => {
+                layout.append(
+                    "Bacteria risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVirus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nResistance improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nBlood flow improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::SickDays => {
+                layout.append(
+                    "Bacteria risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVirus risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nHealing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVessel improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::FreeHealthcare => {
+                layout.append(
+                    "Cancer risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nImmune response improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nHealing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nVessel improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::ParentalLeave => {
+                layout.append(
+                    "Cancer risk reduction",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nLarge immune response improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+                layout.append(
+                    "\nHealing improvement",
+                    0.0,
+                    TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
+                );
+            }
+            Progress::LevelUpSpeed => {}
+            Progress::LevelUpAttack => {}
+            Progress::LevelUpHealth => {}
+        }
+        layout.into()
     }
 }
 
@@ -139,6 +250,73 @@ impl Progress {
             Progress::FreeHealthcare => (100, 10),
             Progress::ParentalLeave => (100, 20),
             _ => (0, 0),
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct Effect {
+    pub dilatation: f32,
+    pub cancer: f32,
+    pub bacteria: f32,
+    pub virus: f32,
+    pub regen: f32,
+    pub health: f32,
+    pub speed: f32,
+    pub attack: f32,
+}
+
+impl Effect {
+    pub fn apply(&mut self, progress: Progress) {
+        match progress {
+            Progress::Disinfectant => {
+                self.bacteria -= 0.2;
+                self.virus -= 0.2;
+            }
+            Progress::Antibiotics => {
+                self.regen += 0.3;
+            }
+            Progress::Vaccine => {
+                self.virus -= 0.5;
+            }
+            Progress::PersonalHygiene => {
+                self.bacteria -= 0.2;
+                self.virus -= 0.2;
+                self.regen += 0.15;
+                self.health += 15.0;
+            }
+            Progress::Sanitation => {
+                self.bacteria -= 0.4;
+                self.virus -= 0.2;
+                self.regen += 0.15;
+                self.speed += 10.0;
+            }
+            Progress::PreventiveMeasures => {
+                self.bacteria -= 0.2;
+                self.virus -= 0.2;
+                self.health += 10.0;
+                self.speed += 5.0;
+            }
+            Progress::SickDays => {
+                self.bacteria -= 0.15;
+                self.virus -= 0.1;
+                self.dilatation += 200.0;
+                self.regen += 0.15;
+            }
+            Progress::FreeHealthcare => {
+                self.dilatation += 200.0;
+                self.cancer -= 0.025;
+                self.attack += 0.2;
+                self.regen += 0.1;
+            }
+            Progress::ParentalLeave => {
+                self.attack += 0.4;
+                self.cancer -= 0.015;
+                self.regen += 0.1;
+            }
+            Progress::LevelUpSpeed => (),
+            Progress::LevelUpAttack => (),
+            Progress::LevelUpHealth => (),
         }
     }
 }
@@ -258,6 +436,8 @@ fn image_button(ui: &mut Ui, progress: Progress, global_state: &mut GlobalState)
             _ => Color32::WHITE,
         })
         .ui(ui)
+        .on_hover_text(progress.details())
+        .on_disabled_hover_text(progress.details())
         .clicked()
         {
             global_state.progress -= cost as f32;

@@ -26,6 +26,7 @@ bevy_rapier2d = { version = "0.12", default-features = false, features = [ "dim2
 # Needed to control log level by feature for release
 tracing = { version = "0.1", optional = true }
 
+strum = { version = "0.24", features = ["derive"] }
 rand = "0.8"
 
 [target.'cfg(target_os = "linux")'.dependencies]

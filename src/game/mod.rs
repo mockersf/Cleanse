@@ -1,6 +1,10 @@
 use bevy::prelude::*;
+use strum::IntoEnumIterator;
 
-use crate::{progress::Progress, tear_down, GameState, GlobalState};
+use crate::{
+    progress::{Effect, Progress},
+    tear_down, GameState, GlobalState,
+};
 
 pub use self::host::HostState;
 use self::{
@@ -8,7 +12,7 @@ use self::{
     immune_system::ImmuneSystem,
 };
 
-mod host;
+pub mod host;
 mod immune_system;
 mod intro;
 mod levelup;
@@ -78,48 +82,26 @@ fn setup(
     let mut cancer = 0.0;
     let mut regen = 0.0;
     let mut dilatation = 500.0 + global_state.generation as f32 * 5.0;
-    if global_state.has(&Progress::Disinfectant) {
-        bacteria -= 0.2;
-        virus -= 0.2;
+    let mut effect = Effect::default();
+    for progress in Progress::iter() {
+        if global_state.has(&progress) {
+            effect.apply(progress);
+        }
     }
-    if global_state.has(&Progress::Antibiotics) {
-        regen += 0.3;
-    }
-    if global_state.has(&Progress::Vaccine) {
-        virus -= 0.5;
-    }
-    if global_state.has(&Progress::PersonalHygiene) {
-        bacteria -= 0.2;
-        virus -= 0.2;
-        regen += 0.15;
-    }
-    if global_state.has(&Progress::Sanitation) {
-        bacteria -= 0.4;
-        virus -= 0.2;
-        regen += 0.15;
-    }
-    if global_state.has(&Progress::PreventiveMeasures) {
-        bacteria -= 0.2;
-        virus -= 0.2;
-    }
-    if global_state.has(&Progress::SickDays) {
-        dilatation += 200.0;
-        bacteria -= 0.15;
-        virus -= 0.1;
-    }
-    if global_state.has(&Progress::FreeHealthcare) {
-        dilatation += 200.0;
-        cancer -= 0.02;
-    }
+    bacteria += effect.bacteria;
+    virus += effect.virus;
+    cancer += effect.cancer;
+    regen += effect.regen;
+    dilatation += effect.dilatation;
 
     commands.insert_resource(HostState {
         age: 0.0,
         status: Status::Healthy,
-        risks: dbg!(Risks {
+        risks: Risks {
             bacteria,
             virus,
             cancer,
-        }),
+        },
         sickness: 0.0,
         regen,
         dilatation,

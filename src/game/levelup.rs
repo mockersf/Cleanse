@@ -6,19 +6,24 @@ use bevy_egui::{
 
 use crate::{progress::Progress, GameState};
 
-use super::immune_system::ImmuneSystem;
+use super::{immune_system::ImmuneSystem, HostState};
 
 pub struct LevelUpPlugin;
 
 impl Plugin for LevelUpPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set(SystemSet::on_update(GameState::LevelUp).with_system(levelup));
+        app.add_system_set(
+            SystemSet::on_update(GameState::LevelUp)
+                .with_system(levelup)
+                .with_system(super::ui::status),
+        );
     }
 }
 
 fn levelup(
     mut egui_context: ResMut<EguiContext>,
     mut immune_system: Query<&mut ImmuneSystem>,
+    host: Res<HostState>,
     mut state: ResMut<State<GameState>>,
 ) {
     egui::Window::new(RichText::new("Level Up!").color(Color32::RED))
@@ -32,17 +37,18 @@ fn levelup(
 
                 ui.horizontal(|ui| {
                     let mut immune_system = immune_system.single_mut();
+                    let age_factor = host.age / 300.0;
 
                     image_button(ui, Progress::LevelUpAttack, || {
-                        immune_system.attack_spawn_rate += 0.2;
+                        immune_system.attack_spawn_rate += age_factor;
                         let _ = state.pop();
                     });
                     image_button(ui, Progress::LevelUpSpeed, || {
-                        immune_system.speed += 15.0;
+                        immune_system.speed += 100.0 * age_factor;
                         let _ = state.pop();
                     });
                     image_button(ui, Progress::LevelUpHealth, || {
-                        immune_system.original_health += 25.0;
+                        immune_system.original_health += 150.0 * age_factor;
                         immune_system.health = immune_system.original_health;
                         let _ = state.pop();
                     });
