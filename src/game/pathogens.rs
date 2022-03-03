@@ -46,6 +46,8 @@ pub fn spawn(
         })
         .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
         .unwrap();
+        let mut velocity = RigidBodyVelocity::zero();
+        velocity.angvel = rng.gen_range(-0.5..0.5);
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
@@ -62,9 +64,10 @@ pub fn spawn(
                 position: position.into(),
                 damping: RigidBodyDamping {
                     linear_damping: 15.0,
-                    angular_damping: 1.0,
+                    angular_damping: 0.0,
                 }
                 .into(),
+                velocity: velocity.into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
@@ -101,6 +104,8 @@ pub fn spawn(
         })
         .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
         .unwrap();
+        let mut velocity = RigidBodyVelocity::zero();
+        velocity.angvel = rng.gen_range(-1.5..1.5);
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
@@ -116,10 +121,11 @@ pub fn spawn(
             .insert_bundle(RigidBodyBundle {
                 position: position.into(),
                 damping: RigidBodyDamping {
-                    angular_damping: 10.0,
                     linear_damping: 15.0,
+                    angular_damping: 0.0,
                 }
                 .into(),
+                velocity: velocity.into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
