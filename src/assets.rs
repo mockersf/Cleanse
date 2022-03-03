@@ -52,6 +52,8 @@ pub struct ProgressAssets {
 pub struct InGameAssets {
     #[asset(path = "sprites/bacteria.png")]
     pub bacteria: Handle<Image>,
+    #[asset(path = "sprites/virus.png")]
+    pub virus: Handle<Image>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

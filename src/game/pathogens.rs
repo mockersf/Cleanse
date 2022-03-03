@@ -105,24 +105,25 @@ pub fn spawn(
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
-                    color: Color::RED,
-                    custom_size: Some(Vec2::new(10.0, 10.0)),
-                    ..Default::default()
+                    color: Color::WHITE,
+                    flip_x: rng.gen_bool(0.5),
+                    flip_y: rng.gen_bool(0.5),
+                    custom_size: None,
                 },
+                texture: assets.virus.clone_weak(),
                 ..Default::default()
             })
             .insert_bundle(RigidBodyBundle {
                 position: position.into(),
-                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
                 damping: RigidBodyDamping {
-                    linear_damping: 10.0,
                     angular_damping: 10.0,
+                    linear_damping: 15.0,
                 }
                 .into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
-                shape: ColliderShape::cuboid(5.0, 5.0).into(),
+                shape: ColliderShape::ball(5.0).into(),
                 flags: ColliderFlags {
                     solver_groups: InteractionGroups::new(1, 1),
                     ..Default::default()
