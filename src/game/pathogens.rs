@@ -48,8 +48,8 @@ pub fn spawn(
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-0.5..0.5);
-        commands
-            .spawn_bundle(SpriteBundle {
+        commands.spawn_bundle(PathogenBundle {
+            sprite: SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
                     color: Color::WHITE,
@@ -59,8 +59,8 @@ pub fn spawn(
                 },
                 texture: assets.bacteria.clone_weak(),
                 ..Default::default()
-            })
-            .insert_bundle(RigidBodyBundle {
+            },
+            rigid_body: RigidBodyBundle {
                 position: position.into(),
                 damping: RigidBodyDamping {
                     linear_damping: 15.0,
@@ -69,8 +69,8 @@ pub fn spawn(
                 .into(),
                 velocity: velocity.into(),
                 ..Default::default()
-            })
-            .insert_bundle(ColliderBundle {
+            },
+            collider: ColliderBundle {
                 shape: ColliderShape::ball(8.0).into(),
                 flags: ColliderFlags {
                     solver_groups: InteractionGroups::new(1, 1),
@@ -78,18 +78,17 @@ pub fn spawn(
                 }
                 .into(),
                 ..Default::default()
-            })
-            .insert(RigidBodyPositionSync::Discrete)
-            .insert_bundle((
-                Bacteria,
-                Pathogen {
-                    speed: 50.0,
-                    strength: 10.0,
-                    last_hit: Timer::from_seconds(1.0, true),
-                    in_contact: false,
-                },
-                ScreenTag,
-            ));
+            },
+            position_sync: RigidBodyPositionSync::Discrete,
+            pathogen_spec: Bacteria,
+            pathogen: Pathogen {
+                speed: 50.0,
+                strength: 10.0,
+                last_hit: Timer::from_seconds(1.0, true),
+                in_contact: false,
+            },
+            tag: ScreenTag,
+        });
     }
     if rng.gen_bool(
         ((state.risks.virus + state.age / 400.0) * time.delta_seconds()).clamp(0.0, 1.0) as f64,
@@ -106,8 +105,8 @@ pub fn spawn(
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-1.5..1.5);
-        commands
-            .spawn_bundle(SpriteBundle {
+        commands.spawn_bundle(PathogenBundle {
+            sprite: SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
                     color: Color::WHITE,
@@ -117,8 +116,8 @@ pub fn spawn(
                 },
                 texture: assets.virus.clone_weak(),
                 ..Default::default()
-            })
-            .insert_bundle(RigidBodyBundle {
+            },
+            rigid_body: RigidBodyBundle {
                 position: position.into(),
                 damping: RigidBodyDamping {
                     linear_damping: 15.0,
@@ -127,8 +126,8 @@ pub fn spawn(
                 .into(),
                 velocity: velocity.into(),
                 ..Default::default()
-            })
-            .insert_bundle(ColliderBundle {
+            },
+            collider: ColliderBundle {
                 shape: ColliderShape::ball(5.0).into(),
                 flags: ColliderFlags {
                     solver_groups: InteractionGroups::new(1, 1),
@@ -136,18 +135,17 @@ pub fn spawn(
                 }
                 .into(),
                 ..Default::default()
-            })
-            .insert(RigidBodyPositionSync::Discrete)
-            .insert_bundle((
-                Bacteria,
-                Pathogen {
-                    speed: 75.0,
-                    strength: 2.0,
-                    last_hit: Timer::from_seconds(1.0, true),
-                    in_contact: false,
-                },
-                ScreenTag,
-            ));
+            },
+            position_sync: RigidBodyPositionSync::Discrete,
+            pathogen_spec: Bacteria,
+            pathogen: Pathogen {
+                speed: 75.0,
+                strength: 2.0,
+                last_hit: Timer::from_seconds(1.0, true),
+                in_contact: false,
+            },
+            tag: ScreenTag,
+        });
     }
     if rng.gen_bool((state.risks.cancer * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
@@ -252,7 +250,7 @@ pub fn cancer_replication(
                     time.seconds_since_startup().sin() as f32,
                     time.seconds_since_startup().cos() as f32,
                 ) * 4.0;
-            spawn_cancer_cell(&mut commands, position, 0.04, assets.cancer.clone_weak());
+            spawn_cancer_cell(&mut commands, position, 0.035, assets.cancer.clone_weak());
         }
     }
 }
@@ -264,8 +262,8 @@ fn spawn_cancer_cell(
     texture: Handle<Image>,
 ) {
     let mut rng = rand::thread_rng();
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn_bundle(PathogenBundle {
+        sprite: SpriteBundle {
             transform: Transform::from_translation(position.extend(z_layers::CANCER)),
             sprite: Sprite {
                 color: Color::WHITE,
@@ -275,8 +273,8 @@ fn spawn_cancer_cell(
             },
             texture,
             ..Default::default()
-        })
-        .insert_bundle(RigidBodyBundle {
+        },
+        rigid_body: RigidBodyBundle {
             position: position.into(),
             mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
             damping: RigidBodyDamping {
@@ -285,8 +283,8 @@ fn spawn_cancer_cell(
             }
             .into(),
             ..Default::default()
-        })
-        .insert_bundle(ColliderBundle {
+        },
+        collider: ColliderBundle {
             mass_properties: ColliderMassProps::Density(100.0).into(),
             shape: ColliderShape::ball(8.0).into(),
             flags: ColliderFlags {
@@ -295,16 +293,29 @@ fn spawn_cancer_cell(
             }
             .into(),
             ..Default::default()
-        })
-        .insert(RigidBodyPositionSync::Discrete)
-        .insert_bundle((
-            Cancer { replication },
-            Pathogen {
-                speed: -500.0,
-                strength: 1000.0,
-                last_hit: Timer::from_seconds(1.0, true),
-                in_contact: false,
-            },
-            ScreenTag,
-        ));
+        },
+        position_sync: RigidBodyPositionSync::Discrete,
+        pathogen_spec: Cancer { replication },
+        pathogen: Pathogen {
+            speed: -500.0,
+            strength: 1000.0,
+            last_hit: Timer::from_seconds(1.0, true),
+            in_contact: false,
+        },
+        tag: ScreenTag,
+    });
+}
+
+#[derive(Bundle)]
+struct PathogenBundle<T: 'static + Sync + Send + Component> {
+    #[bundle]
+    sprite: SpriteBundle,
+    #[bundle]
+    rigid_body: RigidBodyBundle,
+    #[bundle]
+    collider: ColliderBundle,
+    pathogen_spec: T,
+    tag: ScreenTag,
+    position_sync: RigidBodyPositionSync,
+    pathogen: Pathogen,
 }
