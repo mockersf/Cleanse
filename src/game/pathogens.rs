@@ -160,7 +160,7 @@ pub fn spawn(
         })
         .find(|pos| pos.distance_squared(Vec2::ZERO) > 60_000.0)
         .unwrap();
-        spawn_cancer_cell(&mut commands, position, 0.12);
+        spawn_cancer_cell(&mut commands, position, 0.12, assets.cancer.clone_weak());
     }
 }
 
@@ -241,6 +241,7 @@ pub fn cancer_replication(
     mut commands: Commands,
     time: Res<Time>,
     mut cancer_cells: Query<(&Transform, &mut Cancer)>,
+    assets: Res<InGameAssets>,
 ) {
     let mut rng = rand::thread_rng();
     for (transform, mut cancer) in cancer_cells.iter_mut() {
@@ -251,20 +252,28 @@ pub fn cancer_replication(
                     time.seconds_since_startup().sin() as f32,
                     time.seconds_since_startup().cos() as f32,
                 ) * 4.0;
-            spawn_cancer_cell(&mut commands, position, 0.04);
+            spawn_cancer_cell(&mut commands, position, 0.04, assets.cancer.clone_weak());
         }
     }
 }
 
-fn spawn_cancer_cell(commands: &mut Commands, position: Vec2, replication: f32) {
+fn spawn_cancer_cell(
+    commands: &mut Commands,
+    position: Vec2,
+    replication: f32,
+    texture: Handle<Image>,
+) {
+    let mut rng = rand::thread_rng();
     commands
         .spawn_bundle(SpriteBundle {
             transform: Transform::from_translation(position.extend(z_layers::CANCER)),
             sprite: Sprite {
-                color: Color::BLACK,
-                custom_size: Some(Vec2::new(20.0, 20.0)),
-                ..Default::default()
+                color: Color::WHITE,
+                flip_x: rng.gen_bool(0.5),
+                flip_y: rng.gen_bool(0.5),
+                custom_size: None,
             },
+            texture,
             ..Default::default()
         })
         .insert_bundle(RigidBodyBundle {

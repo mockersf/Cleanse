@@ -56,6 +56,8 @@ pub struct InGameAssets {
     pub bacteria: Handle<Image>,
     #[asset(path = "sprites/virus.png")]
     pub virus: Handle<Image>,
+    #[asset(path = "sprites/cancer.png")]
+    pub cancer: Handle<Image>,
     #[asset(path = "sprites/white-cell.png")]
     pub white_cell: Handle<Image>,
 }
