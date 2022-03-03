@@ -160,7 +160,7 @@ pub fn spawn_white_cell(
     } else {
         immune_system.attack_spawn_rate
     };
-    if rand::thread_rng().gen_bool((rate * time.delta_seconds()) as f64) {
+    if rand::thread_rng().gen_bool((rate * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
