@@ -9,6 +9,7 @@ impl Plugin for AssetPlugin {
             .continue_to_state(LoadingState::Done)
             .with_collection::<ProgressAssets>()
             .with_collection::<InGameAssets>()
+            .with_collection::<LevelUpAssets>()
             .build(app);
         app.add_state(LoadingState::Assets);
     }
@@ -34,18 +35,6 @@ pub struct ProgressAssets {
     pub free_healthcare: Handle<Image>,
     #[asset(path = "sprites/pr-parental-leave.png")]
     pub parental_leave: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_speed: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_attack: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_total_health: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_current_health: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_regen: Handle<Image>,
-    #[asset(path = "sprites/placeholder.png")]
-    pub levelup_dilatation: Handle<Image>,
 }
 
 #[derive(AssetCollection)]
@@ -60,6 +49,22 @@ pub struct InGameAssets {
     pub cancer: Handle<Image>,
     #[asset(path = "sprites/white-cell.png")]
     pub white_cell: Handle<Image>,
+}
+
+#[derive(AssetCollection)]
+pub struct LevelUpAssets {
+    #[asset(path = "sprites/lvlup-attack.png")]
+    pub attack: Handle<Image>,
+    #[asset(path = "sprites/lvlup-speed.png")]
+    pub speed: Handle<Image>,
+    #[asset(path = "sprites/lvlup-total-health.png")]
+    pub total_health: Handle<Image>,
+    #[asset(path = "sprites/lvlup-current-health.png")]
+    pub current_health: Handle<Image>,
+    #[asset(path = "sprites/lvlup-regen.png")]
+    pub regen: Handle<Image>,
+    #[asset(path = "sprites/lvlup-dilatation.png")]
+    pub dilatation: Handle<Image>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

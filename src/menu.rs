@@ -8,7 +8,7 @@ use bevy_egui::{
 };
 
 use crate::{
-    assets::{LoadingState, ProgressAssets},
+    assets::{LevelUpAssets, LoadingState, ProgressAssets},
     game::levelup::LevelUp,
     progress::Progress,
     tear_down, GameState, GlobalState,
@@ -30,6 +30,7 @@ struct ScreenTag;
 fn setup(
     mut egui_context: ResMut<EguiContext>,
     assets: Res<ProgressAssets>,
+    lvlup_assets: Res<LevelUpAssets>,
     mut done: Local<bool>,
 ) {
     if !*done {
@@ -113,27 +114,27 @@ fn setup(
         );
         egui_context.set_egui_texture(
             LevelUp::Speed.to_image_id(),
-            assets.levelup_speed.clone_weak(),
+            lvlup_assets.speed.clone_weak(),
         );
         egui_context.set_egui_texture(
             LevelUp::Attack.to_image_id(),
-            assets.levelup_attack.clone_weak(),
+            lvlup_assets.attack.clone_weak(),
         );
         egui_context.set_egui_texture(
             LevelUp::TotalHealth.to_image_id(),
-            assets.levelup_total_health.clone_weak(),
+            lvlup_assets.total_health.clone_weak(),
         );
         egui_context.set_egui_texture(
             LevelUp::CurrentHealth.to_image_id(),
-            assets.levelup_current_health.clone_weak(),
+            lvlup_assets.current_health.clone_weak(),
         );
         egui_context.set_egui_texture(
             LevelUp::Dilatation.to_image_id(),
-            assets.levelup_dilatation.clone_weak(),
+            lvlup_assets.dilatation.clone_weak(),
         );
         egui_context.set_egui_texture(
             LevelUp::Regen.to_image_id(),
-            assets.levelup_regen.clone_weak(),
+            lvlup_assets.regen.clone_weak(),
         );
         *done = true;
     }
