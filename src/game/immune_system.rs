@@ -148,6 +148,7 @@ pub fn spawn_white_cell(
     time: Res<Time>,
     host: Res<HostState>,
     global: Res<GlobalState>,
+    assets: Res<InGameAssets>,
 ) {
     let (position, immune_system) = immune_system.single();
     let rate = if host.age < (global.expectancy / 2.0).min(100.0) {
@@ -161,29 +162,28 @@ pub fn spawn_white_cell(
         immune_system.attack_spawn_rate
     };
     if rand::thread_rng().gen_bool((rate * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+        let mut velocity = RigidBodyVelocity::zero();
+        velocity.angvel = 1.0;
+
         commands
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
-                sprite: Sprite {
-                    color: Color::WHITE,
-                    custom_size: Some(Vec2::new(4.0, 4.0)),
-                    ..Default::default()
-                },
+                texture: assets.white_cell.clone_weak(),
                 ..Default::default()
             })
             .insert_bundle(RigidBodyBundle {
                 position: (**position).into(),
-                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
                 damping: RigidBodyDamping {
-                    linear_damping: 10.0,
-                    angular_damping: 10.0,
+                    linear_damping: 15.0,
+                    angular_damping: 0.0,
                 }
                 .into(),
+                velocity: velocity.into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
                 collider_type: ColliderType::Sensor.into(),
-                shape: ColliderShape::cuboid(2.0, 2.0).into(),
+                shape: ColliderShape::ball(2.0).into(),
                 flags: ActiveEvents::INTERSECTION_EVENTS.into(),
                 ..Default::default()
             })
