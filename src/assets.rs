@@ -8,6 +8,7 @@ impl Plugin for AssetPlugin {
         AssetLoader::new(LoadingState::Assets)
             .continue_to_state(LoadingState::Done)
             .with_collection::<ProgressAssets>()
+            .with_collection::<InGameAssets>()
             .build(app);
         app.add_state(LoadingState::Assets);
     }
@@ -45,6 +46,12 @@ pub struct ProgressAssets {
     pub levelup_regen: Handle<Image>,
     #[asset(path = "sprites/placeholder.png")]
     pub levelup_dilatation: Handle<Image>,
+}
+
+#[derive(AssetCollection)]
+pub struct InGameAssets {
+    #[asset(path = "sprites/bacteria.png")]
+    pub bacteria: Handle<Image>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

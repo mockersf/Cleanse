@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
+use crate::assets::InGameAssets;
+
 use super::{host::HostState, immune_system::ImmuneSystem, z_layers, ScreenTag};
 
 #[derive(Component)]
@@ -28,6 +30,7 @@ pub fn spawn(
     state: Res<HostState>,
     time: Res<Time>,
     windows: Res<Windows>,
+    assets: Res<InGameAssets>,
 ) {
     let mut rng = rand::thread_rng();
     if rng.gen_bool(
@@ -47,24 +50,25 @@ pub fn spawn(
             .spawn_bundle(SpriteBundle {
                 transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
                 sprite: Sprite {
-                    color: Color::GREEN,
-                    custom_size: Some(Vec2::new(16.0, 16.0)),
-                    ..Default::default()
+                    color: Color::WHITE,
+                    flip_x: rng.gen_bool(0.5),
+                    flip_y: rng.gen_bool(0.5),
+                    custom_size: None,
                 },
+                texture: assets.bacteria.clone_weak(),
                 ..Default::default()
             })
             .insert_bundle(RigidBodyBundle {
                 position: position.into(),
-                mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
                 damping: RigidBodyDamping {
-                    linear_damping: 10.0,
+                    linear_damping: 15.0,
                     angular_damping: 1.0,
                 }
                 .into(),
                 ..Default::default()
             })
             .insert_bundle(ColliderBundle {
-                shape: ColliderShape::cuboid(8.0, 8.0).into(),
+                shape: ColliderShape::ball(8.0).into(),
                 flags: ColliderFlags {
                     solver_groups: InteractionGroups::new(1, 1),
                     ..Default::default()
