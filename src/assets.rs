@@ -50,6 +50,8 @@ pub struct ProgressAssets {
 
 #[derive(AssetCollection)]
 pub struct InGameAssets {
+    #[asset(path = "sprites/immune-system.png")]
+    pub immune_system: Handle<Image>,
     #[asset(path = "sprites/bacteria.png")]
     pub bacteria: Handle<Image>,
     #[asset(path = "sprites/virus.png")]

@@ -5,6 +5,7 @@ use rand::Rng;
 use strum::IntoEnumIterator;
 
 use crate::{
+    assets::InGameAssets,
     progress::{Effect, Progress},
     GlobalState,
 };
@@ -30,7 +31,7 @@ impl ImmuneSystem {
     }
 }
 
-pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
+pub fn setup(mut commands: Commands, global_state: Res<GlobalState>, assets: Res<InGameAssets>) {
     let mut speed = 70.0 + 4.0 * global_state.generation as f32;
     let mut health = 10.0 + global_state.generation as f32 / 2.0 + global_state.progress / 700.0;
     let mut attack = global_state.generation as f32 / 180.0 + global_state.progress / 5000.0;
@@ -47,25 +48,21 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>) {
     commands
         .spawn_bundle(SpriteBundle {
             transform: Transform::from_xyz(0.0, 0.0, z_layers::IMMUNE_SYSTEM),
-            sprite: Sprite {
-                color: Color::BLUE,
-                custom_size: Some(Vec2::new(10.0, 10.0)),
-                ..Default::default()
-            },
+            texture: assets.immune_system.clone_weak(),
             ..Default::default()
         })
         .insert_bundle(RigidBodyBundle {
             position: Vec2::new(0.0, 0.0).into(),
             mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
             damping: RigidBodyDamping {
-                linear_damping: 10.0,
+                linear_damping: 15.0,
                 angular_damping: 10.0,
             }
             .into(),
             ..Default::default()
         })
         .insert_bundle(ColliderBundle {
-            shape: ColliderShape::cuboid(5.0, 5.0).into(),
+            shape: ColliderShape::ball(5.0).into(),
             flags: ActiveEvents::CONTACT_EVENTS.into(),
             ..Default::default()
         })
