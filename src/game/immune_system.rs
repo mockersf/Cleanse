@@ -134,7 +134,7 @@ pub fn health(
     let distance_to_zero =
         position.distance_squared(Vec2::ZERO) - (host_state.dilatation / 5.0).powi(2);
     immune_system.health -=
-        distance_to_zero.max(0.0) / 250_000.0 * time.delta_seconds() * host_state.sickness;
+        distance_to_zero.max(0.0) / 250_000.0 * time.delta_seconds() * host_state.sickness * 1.5;
     immune_system.health = (immune_system.health
         + (distance_to_zero.min(0.0).abs() / (host_state.dilatation / 5.0).powi(2))
             * time.delta_seconds()
