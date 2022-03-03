@@ -16,23 +16,23 @@ impl Plugin for AssetPlugin {
 
 #[derive(AssetCollection)]
 pub struct ProgressAssets {
-    #[asset(path = "sprites/disinfectant.png")]
+    #[asset(path = "sprites/pr-disinfectant.png")]
     pub disinfectant: Handle<Image>,
-    #[asset(path = "sprites/antibiotics.png")]
+    #[asset(path = "sprites/pr-antibiotics.png")]
     pub antibiotics: Handle<Image>,
-    #[asset(path = "sprites/vaccine.png")]
+    #[asset(path = "sprites/pr-vaccine.png")]
     pub vaccine: Handle<Image>,
-    #[asset(path = "sprites/sanitation.png")]
+    #[asset(path = "sprites/pr-sanitation.png")]
     pub sanitation: Handle<Image>,
-    #[asset(path = "sprites/personal-hygiene.png")]
+    #[asset(path = "sprites/pr-personal-hygiene.png")]
     pub personal_hygiene: Handle<Image>,
-    #[asset(path = "sprites/preventive-measures.png")]
+    #[asset(path = "sprites/pr-preventive-measures.png")]
     pub preventive_measures: Handle<Image>,
-    #[asset(path = "sprites/sick-days.png")]
+    #[asset(path = "sprites/pr-sick-days.png")]
     pub sick_days: Handle<Image>,
-    #[asset(path = "sprites/free-healthcare.png")]
+    #[asset(path = "sprites/pr-free-healthcare.png")]
     pub free_healthcare: Handle<Image>,
-    #[asset(path = "sprites/parental-leave.png")]
+    #[asset(path = "sprites/pr-parental-leave.png")]
     pub parental_leave: Handle<Image>,
     #[asset(path = "sprites/placeholder.png")]
     pub levelup_speed: Handle<Image>,
