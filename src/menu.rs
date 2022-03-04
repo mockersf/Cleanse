@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{audio::AudioSink, prelude::*};
 use bevy_egui::{
     egui::{
         self, text::LayoutJob, Align2, Color32, FontData, FontDefinitions, FontFamily, RichText,
@@ -8,10 +8,10 @@ use bevy_egui::{
 };
 
 use crate::{
-    assets::{LevelUpAssets, LoadingState, ProgressAssets},
+    assets::{AudioAssets, LevelUpAssets, LoadingState, ProgressAssets},
     game::levelup::LevelUp,
     progress::Progress,
-    tear_down, GameState, GlobalState,
+    tear_down, GameState, GlobalState, UxState,
 };
 
 pub struct MenuPlugin;
@@ -31,6 +31,10 @@ fn setup(
     mut egui_context: ResMut<EguiContext>,
     assets: Res<ProgressAssets>,
     lvlup_assets: Res<LevelUpAssets>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
+    audio_sinks: Res<Assets<AudioSink>>,
+    mut ux: ResMut<UxState>,
     mut done: Local<bool>,
 ) {
     if !*done {
@@ -136,7 +140,19 @@ fn setup(
             LevelUp::Regen.to_image_id(),
             lvlup_assets.regen.clone_weak(),
         );
+
         *done = true;
+    }
+    if ux.background_loop.is_none() {
+        let sink = audio.play(
+            audio_assets.background_loop.clone_weak(),
+            PlaybackSettings {
+                repeat: true,
+                volume: 0.05,
+                speed: 1.0,
+            },
+        );
+        ux.background_loop = Some(audio_sinks.get_handle(sink));
     }
 }
 
@@ -146,6 +162,8 @@ fn menu(
     asset_state: Res<State<LoadingState>>,
     global_state: Res<GlobalState>,
     keyboard: Res<Input<KeyCode>>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -175,6 +193,14 @@ fn menu(
                         ui,
                         new_game,
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.set(GameState::Playing);
                         },
                         asset_state.current() != &LoadingState::Assets,
@@ -200,6 +226,14 @@ fn menu(
                         ui,
                         progress,
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.set(GameState::Progress);
                         },
                         global_state.generation >= 4,
@@ -210,6 +244,14 @@ fn menu(
                         ui,
                         "Quit",
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.set(GameState::Exit);
                         },
                         cfg!(not(target_arch = "wasm32")),
@@ -221,6 +263,14 @@ fn menu(
                             ui,
                             "Cheat",
                             || {
+                                audio.play(
+                                    audio_assets.button.clone_weak(),
+                                    PlaybackSettings {
+                                        repeat: false,
+                                        speed: 1.0,
+                                        volume: 0.2,
+                                    },
+                                );
                                 let _ = state.set(GameState::Cheat);
                             },
                             asset_state.current() != &LoadingState::Assets,

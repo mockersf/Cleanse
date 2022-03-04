@@ -4,7 +4,7 @@ use bevy_egui::{
     EguiContext,
 };
 
-use crate::{game, menu::button, GameState};
+use crate::{assets::AudioAssets, game, menu::button, GameState};
 
 pub struct OldestPlugin;
 
@@ -19,7 +19,12 @@ impl Plugin for OldestPlugin {
     }
 }
 
-fn oldest(mut egui_context: ResMut<EguiContext>, mut state: ResMut<State<GameState>>) {
+fn oldest(
+    mut egui_context: ResMut<EguiContext>,
+    mut state: ResMut<State<GameState>>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
+) {
     egui::Window::new(RichText::new("Congratulation!").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
         .collapsible(false)
@@ -35,6 +40,14 @@ fn oldest(mut egui_context: ResMut<EguiContext>, mut state: ResMut<State<GameSta
                         ui,
                         "My heart will go on...",
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.pop();
                         },
                         true,

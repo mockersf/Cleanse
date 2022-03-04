@@ -5,6 +5,7 @@ use bevy_egui::{
 };
 
 use crate::{
+    assets::AudioAssets,
     game::{self, HostState},
     menu::button,
     tear_down, GameState, GlobalState,
@@ -41,6 +42,8 @@ fn death(
     mut state: ResMut<State<GameState>>,
     host_state: Res<HostState>,
     mut global_state: ResMut<GlobalState>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     let text = if global_state.generation < 5 {
         TEXT[global_state.generation]
@@ -64,6 +67,15 @@ fn death(
                         ui,
                         "Try Again...",
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
+
                             global_state.generation += 1;
                             global_state.progress += host_state.age;
                             global_state.expectancy = host_state.age.max(global_state.expectancy);

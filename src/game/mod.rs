@@ -1,9 +1,9 @@
-use bevy::prelude::*;
+use bevy::{audio::AudioSink, prelude::*};
 use strum::IntoEnumIterator;
 
 use crate::{
     progress::{Effect, Progress},
-    tear_down, GameState, GlobalState,
+    tear_down, GameState, GlobalState, UxState,
 };
 
 pub use self::host::HostState;
@@ -72,7 +72,14 @@ fn setup(
     mut camera: Query<&mut Transform, (With<Camera>, Without<ImmuneSystem>)>,
     mut state: ResMut<State<GameState>>,
     global_state: Res<GlobalState>,
+    mut ux: ResMut<UxState>,
+    audiosinks: Res<Assets<AudioSink>>,
 ) {
+    audiosinks
+        .get(ux.background_loop.take().unwrap())
+        .unwrap()
+        .stop();
+
     if let Ok(mut transform) = camera.get_single_mut() {
         transform.translation.x = 0.0;
         transform.translation.y = 0.0;

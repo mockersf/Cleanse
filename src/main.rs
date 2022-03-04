@@ -2,7 +2,7 @@
 
 #[cfg(feature = "hot")]
 use bevy::asset::AssetServerSettings;
-use bevy::{app::AppExit, prelude::*};
+use bevy::{app::AppExit, audio::AudioSink, prelude::*};
 #[cfg(not(feature = "release"))]
 use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
@@ -96,7 +96,14 @@ fn main() {
             free_healthcare: usize::MAX,
             parental_leave: usize::MAX,
         })
+        .insert_resource(UxState {
+            background_loop: None,
+        })
         .run();
+}
+
+pub struct UxState {
+    pub background_loop: Option<Handle<AudioSink>>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

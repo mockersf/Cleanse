@@ -4,7 +4,11 @@ use bevy_egui::{
     EguiContext,
 };
 
-use crate::{assets::LoadingState, menu::button, GameState, GlobalState};
+use crate::{
+    assets::{AudioAssets, LoadingState},
+    menu::button,
+    GameState, GlobalState,
+};
 
 pub struct CheatPlugin;
 
@@ -20,6 +24,8 @@ fn cheat(
     asset_state: Res<State<LoadingState>>,
     mut global_state: ResMut<GlobalState>,
     keyboard: Res<Input<KeyCode>>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -46,6 +52,15 @@ fn cheat(
                         ui,
                         generation,
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
+
                             if keyboard.pressed(KeyCode::LShift) {
                                 global_state.generation += 10;
                             } else {
@@ -71,6 +86,15 @@ fn cheat(
                         ui,
                         progress,
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
+
                             if keyboard.pressed(KeyCode::LShift) {
                                 global_state.progress += 100.0;
                             } else {
@@ -87,6 +111,15 @@ fn cheat(
                         ui,
                         "Back",
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
+
                             let _ = state.set(GameState::Menu);
                         },
                         true,

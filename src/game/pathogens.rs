@@ -5,7 +5,7 @@ use bevy_easings::{Ease, EaseFunction, EasingComponent, EasingType};
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
-use crate::assets::InGameAssets;
+use crate::assets::{AudioAssets, InGameAssets};
 
 use super::{host::HostState, immune_system::ImmuneSystem, z_layers, ScreenTag};
 
@@ -34,6 +34,8 @@ pub fn spawn(
     time: Res<Time>,
     windows: Res<Windows>,
     assets: Res<InGameAssets>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     let mut rng = rand::thread_rng();
     if rng.gen_bool(
@@ -112,6 +114,14 @@ pub fn spawn(
                 },
             ),
         });
+        audio.play(
+            audio_assets.pathogen_spawn.clone_weak(),
+            PlaybackSettings {
+                repeat: false,
+                volume: 0.15,
+                speed: 1.75,
+            },
+        );
     }
     if rng.gen_bool(
         ((state.risks.virus + state.age / 400.0) * time.delta_seconds()).clamp(0.0, 1.0) as f64,
@@ -189,6 +199,14 @@ pub fn spawn(
                 },
             ),
         });
+        audio.play(
+            audio_assets.pathogen_spawn.clone_weak(),
+            PlaybackSettings {
+                repeat: false,
+                volume: 0.15,
+                speed: 1.4,
+            },
+        );
     }
     if rng.gen_bool((state.risks.cancer * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
@@ -202,6 +220,14 @@ pub fn spawn(
         .find(|pos| pos.distance_squared(Vec2::ZERO) > 60_000.0)
         .unwrap();
         spawn_cancer_cell(&mut commands, position, 0.12, assets.cancer.clone_weak());
+        audio.play(
+            audio_assets.pathogen_spawn.clone_weak(),
+            PlaybackSettings {
+                repeat: false,
+                volume: 0.1,
+                speed: 0.75,
+            },
+        );
     }
 }
 
@@ -283,6 +309,8 @@ pub fn cancer_replication(
     time: Res<Time>,
     mut cancer_cells: Query<(&Transform, &mut Cancer)>,
     assets: Res<InGameAssets>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     let mut rng = rand::thread_rng();
     for (transform, mut cancer) in cancer_cells.iter_mut() {
@@ -294,6 +322,14 @@ pub fn cancer_replication(
                     time.seconds_since_startup().cos() as f32,
                 ) * 4.0;
             spawn_cancer_cell(&mut commands, position, 0.035, assets.cancer.clone_weak());
+            audio.play(
+                audio_assets.pathogen_spawn.clone_weak(),
+                PlaybackSettings {
+                    repeat: false,
+                    volume: 0.1,
+                    speed: 0.75,
+                },
+            );
         }
     }
 }

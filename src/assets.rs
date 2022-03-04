@@ -10,6 +10,7 @@ impl Plugin for AssetPlugin {
             .with_collection::<ProgressAssets>()
             .with_collection::<InGameAssets>()
             .with_collection::<LevelUpAssets>()
+            .with_collection::<AudioAssets>()
             .build(app);
         app.add_state(LoadingState::Assets);
     }
@@ -65,6 +66,26 @@ pub struct LevelUpAssets {
     pub regen: Handle<Image>,
     #[asset(path = "sprites/lvlup-dilatation.png")]
     pub dilatation: Handle<Image>,
+}
+
+#[derive(AssetCollection)]
+pub struct AudioAssets {
+    #[asset(path = "audio/Farm Frolics.ogg")]
+    pub background_loop: Handle<AudioSource>,
+    #[asset(path = "audio/pop.ogg")]
+    pub pathogen_spawn: Handle<AudioSource>,
+    #[asset(path = "audio/pif.ogg")]
+    pub pathogen_destroyed: Handle<AudioSource>,
+    #[asset(path = "audio/pioupioupiou.ogg")]
+    pub lost: Handle<AudioSource>,
+    #[asset(path = "audio/poupim.ogg")]
+    pub levelup: Handle<AudioSource>,
+    #[asset(path = "audio/taratata.ogg")]
+    pub won: Handle<AudioSource>,
+    #[asset(path = "audio/tloc.ogg")]
+    pub button: Handle<AudioSource>,
+    #[asset(path = "audio/tin.ogg")]
+    pub improved: Handle<AudioSource>,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

@@ -4,7 +4,7 @@ use bevy_egui::{
     EguiContext,
 };
 
-use crate::{menu::button, GameState, GlobalState};
+use crate::{assets::AudioAssets, menu::button, GameState, GlobalState};
 
 pub struct IntroPlugin;
 
@@ -45,6 +45,8 @@ fn intro(
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<GameState>>,
     global_state: Res<GlobalState>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     let (title, body, valid) = if global_state.generation < 5 {
         (
@@ -71,6 +73,14 @@ fn intro(
                         ui,
                         valid,
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.pop();
                         },
                         true,

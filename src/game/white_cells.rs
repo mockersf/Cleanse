@@ -3,6 +3,8 @@ use bevy_rapier2d::prelude::{
     IntersectionEvent, IntoEntity, RigidBodyForcesComponent, RigidBodyPositionComponent,
 };
 
+use crate::assets::AudioAssets;
+
 use super::{immune_system::ImmuneSystem, pathogens::Pathogen, HostState};
 
 #[derive(Component)]
@@ -45,6 +47,8 @@ pub fn attack(
     white_cells: Query<&WhiteCell>,
     pathogens: Query<&Pathogen>,
     mut host_state: ResMut<HostState>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     let mut hit = vec![];
     let mut destroyed = 0;
@@ -75,6 +79,14 @@ pub fn attack(
                 commands.entity(white_cell.0).despawn_recursive();
                 commands.entity(pathogen.0).despawn_recursive();
                 destroyed += 1;
+                audio.play(
+                    audio_assets.pathogen_destroyed.clone_weak(),
+                    PlaybackSettings {
+                        repeat: false,
+                        speed: 1.0,
+                        volume: 0.2,
+                    },
+                );
             } else {
                 commands.entity(white_cell.0).despawn_recursive();
             }

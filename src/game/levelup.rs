@@ -11,7 +11,7 @@ use bevy_egui::{
 use rand::prelude::IteratorRandom;
 use strum::{EnumIter, IntoEnumIterator};
 
-use crate::GameState;
+use crate::{assets::AudioAssets, GameState};
 
 use super::{immune_system::ImmuneSystem, HostState};
 
@@ -33,6 +33,8 @@ fn levelup(
     mut host: ResMut<HostState>,
     mut state: ResMut<State<GameState>>,
     mut levelups: Local<Option<Vec<LevelUp>>>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     if let Some(selected) = levelups.as_ref().cloned() {
         egui::Window::new(RichText::new("Level Up!").color(Color32::RED))
@@ -54,6 +56,14 @@ fn levelup(
                                 levelup.apply_host(&mut host, age_factor);
                                 *levelups = None;
                                 let _ = state.pop();
+                                audio.play(
+                                    audio_assets.improved.clone_weak(),
+                                    PlaybackSettings {
+                                        repeat: false,
+                                        speed: 1.25,
+                                        volume: 0.2,
+                                    },
+                                );
                             });
                         }
                     });
