@@ -18,9 +18,12 @@ pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Menu).with_system(setup))
-            .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(tear_down::<ScreenTag>))
-            .add_system_set(SystemSet::on_update(GameState::Menu).with_system(menu));
+        app.add_system_set(SystemSet::on_exit(GameState::Menu).with_system(tear_down::<ScreenTag>))
+            .add_system_set(
+                SystemSet::on_update(GameState::Menu)
+                    .with_system(setup)
+                    .with_system(menu),
+            );
     }
 }
 
@@ -29,15 +32,14 @@ struct ScreenTag;
 
 fn setup(
     mut egui_context: ResMut<EguiContext>,
-    assets: Res<ProgressAssets>,
-    lvlup_assets: Res<LevelUpAssets>,
-    audio_assets: Res<AudioAssets>,
+    assets: Option<Res<ProgressAssets>>,
+    lvlup_assets: Option<Res<LevelUpAssets>>,
+    audio_assets: Option<Res<AudioAssets>>,
     audio: Res<Audio>,
     audio_sinks: Res<Assets<AudioSink>>,
     mut ux: ResMut<UxState>,
-    mut done: Local<bool>,
 ) {
-    if !*done {
+    if !ux.egui_themed {
         debug!("Loading Screen");
 
         let ctx = egui_context.ctx_mut();
@@ -45,7 +47,9 @@ fn setup(
         style.spacing.item_spacing = egui::vec2(20.0, 20.0);
         style.spacing.button_padding = egui::vec2(10.0, 10.0);
         style.spacing.window_padding = egui::vec2(20.0, 20.0);
-        style.visuals.widgets.noninteractive.bg_fill = Color32::from_rgb(30, 0, 0);
+        style.visuals.widgets.noninteractive.bg_fill =
+            // Color32::from_rgba_premultiplied(30, 0, 0, 150);
+            Color32::from_rgba_unmultiplied(30, 0, 0, 247);
         style.visuals.widgets.noninteractive.bg_stroke = Stroke::none();
         style.visuals.widgets.inactive.fg_stroke = Stroke::new(1.0, Color32::WHITE);
         style.visuals.widgets.hovered.bg_stroke = Stroke::none();
@@ -82,77 +86,90 @@ fn setup(
             .and_modify(|f| f.1 = 15.0);
 
         ctx.set_fonts(fonts);
+        ux.egui_themed = true;
+    }
 
-        egui_context.set_egui_texture(
-            Progress::Disinfectant.to_image_id(),
-            assets.disinfectant.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::Antibiotics.to_image_id(),
-            assets.antibiotics.clone_weak(),
-        );
-        egui_context.set_egui_texture(Progress::Vaccine.to_image_id(), assets.vaccine.clone_weak());
-        egui_context.set_egui_texture(
-            Progress::Sanitation.to_image_id(),
-            assets.sanitation.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::PersonalHygiene.to_image_id(),
-            assets.personal_hygiene.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::PreventiveMeasures.to_image_id(),
-            assets.preventive_measures.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::SickDays.to_image_id(),
-            assets.sick_days.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::FreeHealthcare.to_image_id(),
-            assets.free_healthcare.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            Progress::ParentalLeave.to_image_id(),
-            assets.parental_leave.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::Speed.to_image_id(),
-            lvlup_assets.speed.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::Attack.to_image_id(),
-            lvlup_assets.attack.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::TotalHealth.to_image_id(),
-            lvlup_assets.total_health.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::CurrentHealth.to_image_id(),
-            lvlup_assets.current_health.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::Dilatation.to_image_id(),
-            lvlup_assets.dilatation.clone_weak(),
-        );
-        egui_context.set_egui_texture(
-            LevelUp::Regen.to_image_id(),
-            lvlup_assets.regen.clone_weak(),
-        );
+    if !ux.progress_loaded {
+        if let Some(assets) = assets {
+            egui_context.set_egui_texture(
+                Progress::Disinfectant.to_image_id(),
+                assets.disinfectant.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::Antibiotics.to_image_id(),
+                assets.antibiotics.clone_weak(),
+            );
+            egui_context
+                .set_egui_texture(Progress::Vaccine.to_image_id(), assets.vaccine.clone_weak());
+            egui_context.set_egui_texture(
+                Progress::Sanitation.to_image_id(),
+                assets.sanitation.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::PersonalHygiene.to_image_id(),
+                assets.personal_hygiene.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::PreventiveMeasures.to_image_id(),
+                assets.preventive_measures.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::SickDays.to_image_id(),
+                assets.sick_days.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::FreeHealthcare.to_image_id(),
+                assets.free_healthcare.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                Progress::ParentalLeave.to_image_id(),
+                assets.parental_leave.clone_weak(),
+            );
+            ux.progress_loaded = true;
+        }
+    }
+    if !ux.levelup_loaded {
+        if let Some(lvlup_assets) = lvlup_assets {
+            egui_context.set_egui_texture(
+                LevelUp::Speed.to_image_id(),
+                lvlup_assets.speed.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                LevelUp::Attack.to_image_id(),
+                lvlup_assets.attack.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                LevelUp::TotalHealth.to_image_id(),
+                lvlup_assets.total_health.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                LevelUp::CurrentHealth.to_image_id(),
+                lvlup_assets.current_health.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                LevelUp::Dilatation.to_image_id(),
+                lvlup_assets.dilatation.clone_weak(),
+            );
+            egui_context.set_egui_texture(
+                LevelUp::Regen.to_image_id(),
+                lvlup_assets.regen.clone_weak(),
+            );
 
-        *done = true;
+            ux.levelup_loaded = true;
+        }
     }
     if ux.background_loop.is_none() {
-        let sink = audio.play(
-            audio_assets.background_loop.clone_weak(),
-            PlaybackSettings {
-                repeat: true,
-                volume: 0.05,
-                speed: 1.0,
-            },
-        );
-        ux.background_loop = Some(audio_sinks.get_handle(sink));
+        if let Some(audio_assets) = audio_assets {
+            let sink = audio.play(
+                audio_assets.background_loop.clone_weak(),
+                PlaybackSettings {
+                    repeat: true,
+                    volume: 0.05,
+                    speed: 1.0,
+                },
+            );
+            ux.background_loop = Some(audio_sinks.get_handle(sink));
+        }
     }
 }
 

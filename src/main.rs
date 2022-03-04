@@ -99,12 +99,18 @@ fn main() {
         })
         .insert_resource(UxState {
             background_loop: None,
+            egui_themed: false,
+            progress_loaded: false,
+            levelup_loaded: false,
         })
         .run();
 }
 
 pub struct UxState {
     pub background_loop: Option<Handle<AudioSink>>,
+    pub egui_themed: bool,
+    pub progress_loaded: bool,
+    pub levelup_loaded: bool,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
