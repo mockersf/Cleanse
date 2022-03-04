@@ -297,7 +297,7 @@ fn spawn_cancer_cell(
         position_sync: RigidBodyPositionSync::Discrete,
         pathogen_spec: Cancer { replication },
         pathogen: Pathogen {
-            speed: -500.0,
+            speed: -800.0,
             strength: 1000.0,
             last_hit: Timer::from_seconds(1.0, true),
             in_contact: false,
