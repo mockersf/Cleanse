@@ -14,7 +14,6 @@ struct VertexOutput {
 
 struct Input {
     resolution: vec2<f32>;
-    pos: vec2<f32>;
     time: f32;
     seed: f32;
     speed: f32;
