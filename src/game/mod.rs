@@ -56,6 +56,9 @@ impl Plugin for GamePlugin {
     }
 }
 
+#[derive(SystemLabel, Clone, PartialEq, Hash, Debug, Eq)]
+struct UiStatus;
+
 pub mod z_layers {
     pub const BLOODFIELD: f32 = 0.0;
     pub const TISSUE: f32 = 1.0;

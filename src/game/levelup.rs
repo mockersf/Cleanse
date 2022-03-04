@@ -13,7 +13,7 @@ use strum::{EnumIter, IntoEnumIterator};
 
 use crate::{assets::AudioAssets, GameState};
 
-use super::{immune_system::ImmuneSystem, HostState};
+use super::{immune_system::ImmuneSystem, HostState, UiStatus};
 
 pub struct LevelUpPlugin;
 
@@ -21,8 +21,8 @@ impl Plugin for LevelUpPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_system_set(
             SystemSet::on_update(GameState::LevelUp)
-                .with_system(levelup)
-                .with_system(super::ui::status),
+                .with_system(levelup.after(UiStatus))
+                .with_system(super::ui::status.label(UiStatus)),
         );
     }
 }
