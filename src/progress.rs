@@ -10,7 +10,7 @@ use bevy_egui::{
 };
 use strum::EnumIter;
 
-use crate::{menu::button, GameState, GlobalState};
+use crate::{assets::AudioAssets, menu::button, GameState, GlobalState};
 
 pub struct ProgressPlugin;
 
@@ -183,7 +183,7 @@ impl Progress {
             }
             Progress::FreeHealthcare => {
                 layout.append(
-                    "Cancer risk reduction",
+                    "Large Cancer risk reduction",
                     0.0,
                     TextFormat::simple(egui::TextStyle::Small, Color32::LIGHT_GRAY),
                 );
@@ -292,13 +292,13 @@ impl Effect {
             }
             Progress::FreeHealthcare => {
                 self.dilatation += 200.0;
-                self.cancer -= 0.025;
-                self.attack += 0.2;
+                self.cancer -= 0.08;
+                self.attack += 0.15;
                 self.regen += 0.1;
             }
             Progress::ParentalLeave => {
                 self.attack += 0.4;
-                self.cancer -= 0.015;
+                self.cancer -= 0.04;
                 self.regen += 0.1;
             }
         }
@@ -344,6 +344,8 @@ fn progress(
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<GameState>>,
     mut global_state: ResMut<GlobalState>,
+    audio_assets: Res<AudioAssets>,
+    audio: Res<Audio>,
 ) {
     egui::Window::new(RichText::new("Cleanse").color(Color32::RED))
         .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
@@ -359,21 +361,75 @@ fn progress(
                 ui.separator();
 
                 ui.horizontal(|ui| {
-                    image_button(ui, Progress::Disinfectant, &mut *global_state);
-                    image_button(ui, Progress::Antibiotics, &mut *global_state);
-                    image_button(ui, Progress::Vaccine, &mut *global_state);
+                    image_button(
+                        ui,
+                        Progress::Disinfectant,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::Antibiotics,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::Vaccine,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
                 });
 
                 ui.horizontal(|ui| {
-                    image_button(ui, Progress::PersonalHygiene, &mut *global_state);
-                    image_button(ui, Progress::Sanitation, &mut *global_state);
-                    image_button(ui, Progress::PreventiveMeasures, &mut *global_state);
+                    image_button(
+                        ui,
+                        Progress::PersonalHygiene,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::Sanitation,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::PreventiveMeasures,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
                 });
 
                 ui.horizontal(|ui| {
-                    image_button(ui, Progress::SickDays, &mut *global_state);
-                    image_button(ui, Progress::FreeHealthcare, &mut *global_state);
-                    image_button(ui, Progress::ParentalLeave, &mut *global_state);
+                    image_button(
+                        ui,
+                        Progress::SickDays,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::FreeHealthcare,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
+                    image_button(
+                        ui,
+                        Progress::ParentalLeave,
+                        &mut *global_state,
+                        &audio_assets,
+                        &audio,
+                    );
                 });
 
                 ui.add_space(20.0);
@@ -383,6 +439,14 @@ fn progress(
                         ui,
                         "Back",
                         || {
+                            audio.play(
+                                audio_assets.button.clone_weak(),
+                                PlaybackSettings {
+                                    repeat: false,
+                                    speed: 1.0,
+                                    volume: 0.2,
+                                },
+                            );
                             let _ = state.set(GameState::Menu);
                         },
                         true,
@@ -394,7 +458,13 @@ fn progress(
         });
 }
 
-fn image_button(ui: &mut Ui, progress: Progress, global_state: &mut GlobalState) {
+fn image_button(
+    ui: &mut Ui,
+    progress: Progress,
+    global_state: &mut GlobalState,
+    audio_assets: &Res<AudioAssets>,
+    audio: &Res<Audio>,
+) {
     ui.with_layout(Layout::left_to_right(), |ui| {
         ui.set_width(300.0);
 
@@ -422,6 +492,14 @@ fn image_button(ui: &mut Ui, progress: Progress, global_state: &mut GlobalState)
         .on_disabled_hover_text(progress.details())
         .clicked()
         {
+            audio.play(
+                audio_assets.improved.clone_weak(),
+                PlaybackSettings {
+                    repeat: false,
+                    speed: 1.0,
+                    volume: 0.2,
+                },
+            );
             global_state.progress -= cost as f32;
             global_state.get(&progress);
         }

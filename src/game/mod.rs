@@ -85,8 +85,8 @@ fn setup(
         transform.translation.y = 0.0;
     }
 
-    let mut bacteria = 1.6;
-    let mut virus = 1.6;
+    let mut bacteria = 1.7;
+    let mut virus = 1.7;
     let mut cancer = 0.0;
     let mut regen = global_state.generation as f32 / 100.0 + global_state.progress / 5000.0;
     let mut dilatation =

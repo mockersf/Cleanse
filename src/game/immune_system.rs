@@ -32,9 +32,14 @@ impl ImmuneSystem {
 }
 
 pub fn setup(mut commands: Commands, global_state: Res<GlobalState>, assets: Res<InGameAssets>) {
-    let mut speed = 70.0 + 4.0 * global_state.generation as f32;
+    let mut generation = global_state.generation as f32;
+    let mut speed = 70.0 + 4.5 * generation.min(10.0);
+    generation -= 10.0;
+    speed += 3.5 * generation.max(0.0);
     let mut health = 10.0 + global_state.generation as f32 / 2.0 + global_state.progress / 700.0;
-    let mut attack = global_state.generation as f32 / 180.0 + global_state.progress / 5000.0;
+    let mut attack = global_state.generation as f32 / 180.0
+        + global_state.progress / 5000.0
+        + (global_state.generation - 18).min(0) as f32 / 50.0;
     let mut effect = Effect::default();
     for progress in Progress::iter() {
         if global_state.has(&progress) {
@@ -55,7 +60,7 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>, assets: Res
             position: Vec2::new(0.0, 0.0).into(),
             mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
             damping: RigidBodyDamping {
-                linear_damping: 15.0,
+                linear_damping: 20.0,
                 angular_damping: 10.0,
             }
             .into(),

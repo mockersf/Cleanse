@@ -31,6 +31,7 @@ fn main() {
         #[cfg(not(feature = "release"))]
         present_mode: PresentMode::Immediate,
         resizable: false,
+        decorations: false,
         ..Default::default()
     })
     .insert_resource(ClearColor(Color::BLACK));

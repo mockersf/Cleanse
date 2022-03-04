@@ -50,7 +50,7 @@ pub fn aging(
         *oldest = true;
     }
     if host_state.risks.cancer <= 0.1 && host_state.age > 50.0 {
-        host_state.risks.cancer += 0.07;
+        host_state.risks.cancer += 0.15;
     }
     if (host_state.age + host_state.exp as f32 * 2.0) > host_state.next_level_up {
         host_state.next_level_up *= 1.5;

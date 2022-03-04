@@ -185,7 +185,7 @@ impl LevelUp {
                 immune_system.attack_spawn_rate += factor;
             }
             LevelUp::Speed => {
-                immune_system.speed += 100.0 * factor;
+                immune_system.speed += 80.0 * factor;
             }
             LevelUp::TotalHealth => {
                 immune_system.original_health += 150.0 * factor;
@@ -204,7 +204,7 @@ impl LevelUp {
             LevelUp::TotalHealth => {}
             LevelUp::CurrentHealth => {}
             LevelUp::Regen => {
-                host.regen += factor / 2.0;
+                host.regen += factor * 0.6;
             }
             LevelUp::Dilatation => {
                 host.dilatation += factor * 400.0;
