@@ -39,7 +39,7 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>, assets: Res
     let mut health = 10.0 + global_state.generation as f32 / 2.0 + global_state.progress / 700.0;
     let mut attack = global_state.generation as f32 / 180.0
         + global_state.progress / 5000.0
-        + (global_state.generation - 18).max(0) as f32 / 100.0;
+        + (global_state.generation as f32 - 18.0).max(0.0) / 100.0;
     let mut effect = Effect::default();
     for progress in Progress::iter() {
         if global_state.has(&progress) {

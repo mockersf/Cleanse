@@ -208,7 +208,10 @@ pub fn spawn(
             },
         );
     }
-    if rng.gen_bool((state.risks.cancer * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
+    if rng.gen_bool(
+        ((state.risks.cancer + state.age.min(100.0) / 1000.0) * time.delta_seconds())
+            .clamp(0.0, 1.0) as f64,
+    ) {
         let window = windows.get_primary().unwrap();
         let (width, height) = (window.width() * 0.985, window.height() * 0.975);
         let position = std::iter::repeat_with(|| {
@@ -365,7 +368,7 @@ fn spawn_cancer_cell(
         },
         collider: ColliderBundle {
             mass_properties: ColliderMassProps::Density(100.0).into(),
-            shape: ColliderShape::ball(8.0).into(),
+            shape: ColliderShape::ball(9.0).into(),
             flags: ColliderFlags {
                 solver_groups: InteractionGroups::new(2, 2),
                 ..Default::default()
@@ -376,7 +379,7 @@ fn spawn_cancer_cell(
         position_sync: RigidBodyPositionSync::Discrete,
         pathogen_spec: Cancer { replication },
         pathogen: Pathogen {
-            speed: -800.0,
+            speed: -1000.0,
             strength: 1000.0,
             last_hit: Timer::from_seconds(1.0, true),
             in_contact: false,

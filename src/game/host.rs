@@ -49,11 +49,11 @@ pub fn aging(
         let _ = state.push(GameState::Oldest);
         *oldest = true;
     }
-    if host_state.risks.cancer <= 0.1 && host_state.age > 50.0 {
-        host_state.risks.cancer += 0.15;
+    if host_state.risks.cancer <= 0.01 && host_state.age > 50.0 {
+        host_state.risks.cancer += 0.2;
     }
     if (host_state.age + host_state.exp as f32 * 2.0) > host_state.next_level_up {
-        host_state.next_level_up *= 1.5;
+        host_state.next_level_up += (host_state.next_level_up * 1.5).min(150.0);
         audio.play(
             audio_assets.levelup.clone_weak(),
             PlaybackSettings {
