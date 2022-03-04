@@ -1,4 +1,7 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
+use bevy_easings::{Ease, EaseFunction, EasingType};
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
@@ -48,47 +51,70 @@ pub fn spawn(
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-0.5..0.5);
-        commands.spawn_bundle(PathogenBundle {
-            sprite: SpriteBundle {
-                transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
-                sprite: Sprite {
-                    color: Color::WHITE,
-                    flip_x: rng.gen_bool(0.5),
-                    flip_y: rng.gen_bool(0.5),
-                    custom_size: None,
-                },
-                texture: assets.bacteria.clone_weak(),
-                ..Default::default()
-            },
-            rigid_body: RigidBodyBundle {
-                position: position.into(),
-                damping: RigidBodyDamping {
-                    linear_damping: 15.0,
-                    angular_damping: 0.0,
-                }
-                .into(),
-                velocity: velocity.into(),
-                ..Default::default()
-            },
-            collider: ColliderBundle {
-                shape: ColliderShape::ball(8.0).into(),
-                flags: ColliderFlags {
-                    solver_groups: InteractionGroups::new(1, 1),
+        commands
+            .spawn_bundle(PathogenBundle {
+                sprite: SpriteBundle {
+                    transform: Transform {
+                        translation: position.extend(z_layers::PATHOGEN),
+                        scale: Vec2::ZERO.extend(1.0),
+                        rotation: Quat::IDENTITY,
+                    },
+                    sprite: Sprite {
+                        color: Color::WHITE,
+                        flip_x: rng.gen_bool(0.5),
+                        flip_y: rng.gen_bool(0.5),
+                        custom_size: None,
+                    },
+                    texture: assets.bacteria.clone_weak(),
                     ..Default::default()
+                },
+                rigid_body: RigidBodyBundle {
+                    position: position.into(),
+                    damping: RigidBodyDamping {
+                        linear_damping: 15.0,
+                        angular_damping: 0.0,
+                    }
+                    .into(),
+                    velocity: velocity.into(),
+                    ..Default::default()
+                },
+                collider: ColliderBundle {
+                    shape: ColliderShape::ball(8.0).into(),
+                    flags: ColliderFlags {
+                        solver_groups: InteractionGroups::new(1, 1),
+                        ..Default::default()
+                    }
+                    .into(),
+                    ..Default::default()
+                },
+                position_sync: RigidBodyPositionSync::Discrete,
+                pathogen_spec: Bacteria,
+                pathogen: Pathogen {
+                    speed: 50.0,
+                    strength: 10.0,
+                    last_hit: Timer::from_seconds(1.0, true),
+                    in_contact: false,
+                },
+                tag: ScreenTag,
+            })
+            .insert(
+                Transform {
+                    translation: position.extend(z_layers::PATHOGEN),
+                    scale: Vec2::ZERO.extend(1.0),
+                    rotation: Quat::IDENTITY,
                 }
-                .into(),
-                ..Default::default()
-            },
-            position_sync: RigidBodyPositionSync::Discrete,
-            pathogen_spec: Bacteria,
-            pathogen: Pathogen {
-                speed: 50.0,
-                strength: 10.0,
-                last_hit: Timer::from_seconds(1.0, true),
-                in_contact: false,
-            },
-            tag: ScreenTag,
-        });
+                .ease_to(
+                    Transform {
+                        translation: position.extend(z_layers::PATHOGEN),
+                        scale: Vec3::ONE,
+                        rotation: Quat::IDENTITY,
+                    },
+                    EaseFunction::CubicOut,
+                    EasingType::Once {
+                        duration: Duration::from_millis(4000),
+                    },
+                ),
+            );
     }
     if rng.gen_bool(
         ((state.risks.virus + state.age / 400.0) * time.delta_seconds()).clamp(0.0, 1.0) as f64,
@@ -105,47 +131,70 @@ pub fn spawn(
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-1.5..1.5);
-        commands.spawn_bundle(PathogenBundle {
-            sprite: SpriteBundle {
-                transform: Transform::from_translation(position.extend(z_layers::PATHOGEN)),
-                sprite: Sprite {
-                    color: Color::WHITE,
-                    flip_x: rng.gen_bool(0.5),
-                    flip_y: rng.gen_bool(0.5),
-                    custom_size: None,
-                },
-                texture: assets.virus.clone_weak(),
-                ..Default::default()
-            },
-            rigid_body: RigidBodyBundle {
-                position: position.into(),
-                damping: RigidBodyDamping {
-                    linear_damping: 15.0,
-                    angular_damping: 0.0,
-                }
-                .into(),
-                velocity: velocity.into(),
-                ..Default::default()
-            },
-            collider: ColliderBundle {
-                shape: ColliderShape::ball(5.0).into(),
-                flags: ColliderFlags {
-                    solver_groups: InteractionGroups::new(1, 1),
+        commands
+            .spawn_bundle(PathogenBundle {
+                sprite: SpriteBundle {
+                    transform: Transform {
+                        translation: position.extend(z_layers::PATHOGEN),
+                        scale: Vec2::ZERO.extend(1.0),
+                        rotation: Quat::IDENTITY,
+                    },
+                    sprite: Sprite {
+                        color: Color::WHITE,
+                        flip_x: rng.gen_bool(0.5),
+                        flip_y: rng.gen_bool(0.5),
+                        custom_size: None,
+                    },
+                    texture: assets.virus.clone_weak(),
                     ..Default::default()
+                },
+                rigid_body: RigidBodyBundle {
+                    position: position.into(),
+                    damping: RigidBodyDamping {
+                        linear_damping: 15.0,
+                        angular_damping: 0.0,
+                    }
+                    .into(),
+                    velocity: velocity.into(),
+                    ..Default::default()
+                },
+                collider: ColliderBundle {
+                    shape: ColliderShape::ball(5.0).into(),
+                    flags: ColliderFlags {
+                        solver_groups: InteractionGroups::new(1, 1),
+                        ..Default::default()
+                    }
+                    .into(),
+                    ..Default::default()
+                },
+                position_sync: RigidBodyPositionSync::Discrete,
+                pathogen_spec: Bacteria,
+                pathogen: Pathogen {
+                    speed: 75.0,
+                    strength: 2.0,
+                    last_hit: Timer::from_seconds(1.0, true),
+                    in_contact: false,
+                },
+                tag: ScreenTag,
+            })
+            .insert(
+                Transform {
+                    translation: position.extend(z_layers::PATHOGEN),
+                    scale: Vec2::ZERO.extend(1.0),
+                    rotation: Quat::IDENTITY,
                 }
-                .into(),
-                ..Default::default()
-            },
-            position_sync: RigidBodyPositionSync::Discrete,
-            pathogen_spec: Bacteria,
-            pathogen: Pathogen {
-                speed: 75.0,
-                strength: 2.0,
-                last_hit: Timer::from_seconds(1.0, true),
-                in_contact: false,
-            },
-            tag: ScreenTag,
-        });
+                .ease_to(
+                    Transform {
+                        translation: position.extend(z_layers::PATHOGEN),
+                        scale: Vec3::ONE,
+                        rotation: Quat::IDENTITY,
+                    },
+                    EaseFunction::CubicOut,
+                    EasingType::Once {
+                        duration: Duration::from_millis(4000),
+                    },
+                ),
+            );
     }
     if rng.gen_bool((state.risks.cancer * time.delta_seconds()).clamp(0.0, 1.0) as f64) {
         let window = windows.get_primary().unwrap();
