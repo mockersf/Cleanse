@@ -44,16 +44,15 @@ trace = [ "bevy/trace", "bevy/trace_tracy" ]
 
 
 [patch.crates-io]
-# bevy = { git = "https://github.com/bevyengine//bevy", branch = "main" }
-bevy = { path = "../bevy_friends/bevy" }
+bevy = { git = "https://github.com/mockersf//bevy", branch = "audio-control-at-start" }
 bevy_egui = { git = "https://github.com/mockersf/bevy_egui", branch = "bevy-main" }
 bevy_rapier2d = { git = "https://github.com/mockersf/bevy_rapier", branch = "bevy-main" }
 # needed for https://github.com/dimforge/rapier/pull/284
 rapier2d = { git = "https://github.com/dimforge/rapier" }
+egui = { git = "https://github.com/emilk/egui", rev = "b5c119ef1994b42c254193205acc64444c7750c0" }
 
 [patch."https://github.com/bevyengine/bevy"]
-# bevy = { git = "https://github.com/bevyengine//bevy", branch = "main" }
-bevy = { path = "../bevy_friends/bevy" }
+bevy = { git = "https://github.com/mockersf//bevy", branch = "audio-control-at-start" }
 
 [profile.dev.package."*"]
 opt-level = 3
