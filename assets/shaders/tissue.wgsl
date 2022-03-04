@@ -68,7 +68,7 @@ fn sm_vr(st: vec2<f32>, time: f32) -> f32 {
 [[stage(fragment)]]
 fn fragment(in: VertexOutput) -> [[location(0)]] vec4<f32> {
     let on_screen = in.uv.xy * 2.0 - vec2<f32>(1.0, 1.0);
-    let coords = on_screen * input.resolution + input.pos;
+    let coords = on_screen * input.resolution ;
     let abs_coords = abs(coords);
 
     let transparency = 1.0;
@@ -76,7 +76,7 @@ fn fragment(in: VertexOutput) -> [[location(0)]] vec4<f32> {
     let alpha1 = smoothStep(0.0, transparency, abs_coords.x / input.dilatation);
     let alpha2 = smoothStep(0.0, transparency, abs_coords.y / input.dilatation);
 
-    let v_coords = in.uv.xy * 100.0 + input.pos / input.speed;
+    let v_coords = in.uv.xy * 100.0;
     var c = 0.0;
     for (var i = 3.0; i >= 0.0; i = i - 1.0)   {
         var vr = sm_vr(v_coords * pow(2.0, i), input.time * 5.0 + input.seed );

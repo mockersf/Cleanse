@@ -66,7 +66,6 @@ fn setup(
                 material: materials.add(BloodfieldMaterial {
                     time: 0.0,
                     seed: rand::thread_rng().gen::<i16>() as f32,
-                    pos: Vec2::ZERO,
                 }),
                 ..Default::default()
             })
@@ -77,25 +76,11 @@ fn setup(
 
 #[allow(clippy::type_complexity)]
 fn update_bloodfield_material(
-    camera: Query<
-        &Transform,
-        (
-            With<OrthographicProjection>,
-            With<Camera>,
-            Without<Handle<BloodfieldMaterial>>,
-        ),
-    >,
     time: Res<Time>,
     mut bloodfield_materials: ResMut<Assets<BloodfieldMaterial>>,
-    mut bloodfield: Query<&mut Transform, With<Handle<BloodfieldMaterial>>>,
 ) {
     for (_id, mut bloodfield_material) in bloodfield_materials.iter_mut() {
-        let camera_transform = camera.single();
-        let camera_pos = camera_transform.translation.truncate();
         bloodfield_material.time += time.delta_seconds();
-        bloodfield_material.pos = camera_pos;
-        let mut field_transform = bloodfield.single_mut();
-        field_transform.translation = camera_pos.extend(z_layers::BLOODFIELD);
     }
 }
 
@@ -104,7 +89,6 @@ fn update_bloodfield_material(
 struct BloodfieldMaterial {
     time: f32,
     seed: f32,
-    pos: Vec2,
 }
 
 #[derive(Clone)]
@@ -124,12 +108,7 @@ impl RenderAsset for BloodfieldMaterial {
         extracted_asset: Self::ExtractedAsset,
         (render_device, material_pipeline): &mut SystemParamItem<Self::Param>,
     ) -> Result<Self::PreparedAsset, PrepareAssetError<Self::ExtractedAsset>> {
-        let value = Vec4::new(
-            extracted_asset.time,
-            extracted_asset.seed,
-            extracted_asset.pos.x,
-            -extracted_asset.pos.y,
-        );
+        let value = Vec4::new(extracted_asset.time, extracted_asset.seed, 0.0, 0.0);
         let buffer = render_device.create_buffer_with_data(&BufferInitDescriptor {
             contents: value.as_std140().as_bytes(),
             label: Some("Bloodfield Settings Buffer"),

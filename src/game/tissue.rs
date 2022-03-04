@@ -70,7 +70,6 @@ fn setup(
                 resolution,
                 time: 0.0,
                 seed: rand::thread_rng().gen::<i16>() as f32,
-                pos: Vec2::ZERO,
                 speed: 0.0,
                 sickness: 0.0,
                 dilatation: 500.0,
@@ -82,30 +81,16 @@ fn setup(
 
 #[allow(clippy::type_complexity)]
 fn update_tissue_material(
-    camera: Query<
-        &Transform,
-        (
-            With<OrthographicProjection>,
-            With<Camera>,
-            Without<Handle<TissueMaterial>>,
-        ),
-    >,
     immune_system: Query<&ImmuneSystem>,
     time: Res<Time>,
     mut tissue_materials: ResMut<Assets<TissueMaterial>>,
-    mut tissue: Query<&mut Transform, With<Handle<TissueMaterial>>>,
     host: Res<HostState>,
 ) {
     for (_, mut tissue_material) in tissue_materials.iter_mut() {
-        let camera_transform = camera.single();
-        let camera_pos = camera_transform.translation.truncate();
         tissue_material.time += time.delta_seconds();
-        tissue_material.pos = camera_pos * Vec2::new(1.0, -1.0);
         tissue_material.speed = immune_system.single().speed;
         tissue_material.sickness = host.sickness;
         tissue_material.dilatation = host.dilatation;
-        let mut field_transform = tissue.single_mut();
-        field_transform.translation = camera_pos.extend(z_layers::TISSUE);
     }
 }
 
@@ -113,7 +98,6 @@ fn update_tissue_material(
 #[uuid = "754DDD8C-641C-48F2-A330-596F22A8AB57"]
 struct TissueMaterial {
     resolution: Vec2,
-    pos: Vec2,
     time: f32,
     seed: f32,
     speed: f32,

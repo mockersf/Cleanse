@@ -15,7 +15,6 @@ struct VertexOutput {
 struct Input {
     time: f32;
     seed: f32;
-    pos: vec2<f32>;
 };
 
 [[group(0), binding(0)]]
@@ -63,7 +62,7 @@ fn sm_vr(st: vec2<f32>, time: f32) -> f32 {
 
 [[stage(fragment)]]
 fn fragment(in: VertexOutput) -> [[location(0)]] vec4<f32> {
-    let coords = in.uv.xy * 20.0 + input.pos / 200.0;
+    let coords = in.uv.xy * 20.0;
 
     var c = 0.0;
     for (var i = 3.0; i >= 0.0; i = i - 1.0)   {
