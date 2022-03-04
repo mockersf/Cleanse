@@ -10,6 +10,7 @@ use bevy::{
     window::PresentMode,
 };
 
+use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use bevy_rapier2d::physics::{NoUserData, RapierConfiguration, RapierPhysicsPlugin};
 
@@ -69,6 +70,7 @@ fn main() {
             gravity: Vec2::new(0., 0.).into(),
             ..Default::default()
         })
+        .add_plugin(EasingsPlugin)
         .add_system_set(SystemSet::on_enter(GameState::Exit).with_system(exit))
         .add_state(GameState::Splash)
         .add_plugin(assets::AssetPlugin)
