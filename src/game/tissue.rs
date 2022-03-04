@@ -1,4 +1,5 @@
 use bevy::{
+    core::FixedTimestep,
     ecs::system::{lifetimeless::SRes, SystemParamItem},
     math::const_vec3,
     prelude::*,
@@ -19,7 +20,7 @@ use rand::Rng;
 
 use crate::{game::z_layers, tear_down, GameState};
 
-use super::{host::HostState, ImmuneSystem};
+use super::host::HostState;
 
 #[derive(Component)]
 pub struct ScreenTag;
@@ -33,16 +34,9 @@ impl Plugin for TissuePlugin {
                 SystemSet::on_exit(GameState::Playing).with_system(tear_down::<ScreenTag>),
             )
             .add_system_set(
-                SystemSet::on_update(GameState::Intro).with_system(update_tissue_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Oldest).with_system(update_tissue_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::LevelUp).with_system(update_tissue_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(update_tissue_material),
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(0.05))
+                    .with_system(update_tissue_material),
             );
     }
 }
@@ -70,7 +64,6 @@ fn setup(
                 resolution,
                 time: 0.0,
                 seed: rand::thread_rng().gen::<i16>() as f32,
-                speed: 0.0,
                 sickness: 0.0,
                 dilatation: 500.0,
             }),
@@ -81,14 +74,13 @@ fn setup(
 
 #[allow(clippy::type_complexity)]
 fn update_tissue_material(
-    immune_system: Query<&ImmuneSystem>,
     time: Res<Time>,
     mut tissue_materials: ResMut<Assets<TissueMaterial>>,
-    host: Res<HostState>,
+    host: Option<Res<HostState>>,
 ) {
-    for (_, mut tissue_material) in tissue_materials.iter_mut() {
-        tissue_material.time += time.delta_seconds();
-        tissue_material.speed = immune_system.single().speed;
+    if let Some((_, mut tissue_material)) = tissue_materials.iter_mut().next() {
+        let host = host.unwrap();
+        tissue_material.time = time.seconds_since_startup() as f32;
         tissue_material.sickness = host.sickness;
         tissue_material.dilatation = host.dilatation;
     }
@@ -100,7 +92,6 @@ struct TissueMaterial {
     resolution: Vec2,
     time: f32,
     seed: f32,
-    speed: f32,
     sickness: f32,
     dilatation: f32,
 }

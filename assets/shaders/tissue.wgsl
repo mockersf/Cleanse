@@ -16,7 +16,6 @@ struct Input {
     resolution: vec2<f32>;
     time: f32;
     seed: f32;
-    speed: f32;
     sickness: f32;
     dilatation: f32;
 };

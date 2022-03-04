@@ -1,4 +1,5 @@
 use bevy::{
+    core::FixedTimestep,
     ecs::system::{lifetimeless::SRes, SystemParamItem},
     math::const_vec3,
     prelude::*,
@@ -28,16 +29,9 @@ impl Plugin for BloodfieldPlugin {
         app.add_plugin(Material2dPlugin::<BloodfieldMaterial>::default())
             .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(setup))
             .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(update_bloodfield_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Menu).with_system(update_bloodfield_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Progress).with_system(update_bloodfield_material),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Cheat).with_system(update_bloodfield_material),
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(0.05))
+                    .with_system(update_bloodfield_material),
             );
     }
 }
@@ -80,7 +74,7 @@ fn update_bloodfield_material(
     mut bloodfield_materials: ResMut<Assets<BloodfieldMaterial>>,
 ) {
     for (_id, mut bloodfield_material) in bloodfield_materials.iter_mut() {
-        bloodfield_material.time += time.delta_seconds();
+        bloodfield_material.time = time.seconds_since_startup() as f32;
     }
 }
 
