@@ -49,7 +49,7 @@ pub fn spawn(
                 rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
             )
         })
-        .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 50_000.0)
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-0.5..0.5);
@@ -134,7 +134,7 @@ pub fn spawn(
                 rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
             )
         })
-        .find(|pos| pos.distance_squared(Vec2::ZERO) > 40_000.0)
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 50_000.0)
         .unwrap();
         let mut velocity = RigidBodyVelocity::zero();
         velocity.angvel = rng.gen_range(-1.5..1.5);
@@ -217,7 +217,7 @@ pub fn spawn(
                 rng.gen_range((-height / 2.0)..(height / 2.0 * 0.9)),
             )
         })
-        .find(|pos| pos.distance_squared(Vec2::ZERO) > 60_000.0)
+        .find(|pos| pos.distance_squared(Vec2::ZERO) > 80_000.0)
         .unwrap();
         spawn_cancer_cell(&mut commands, position, 0.12, assets.cancer.clone_weak());
         audio.play(
