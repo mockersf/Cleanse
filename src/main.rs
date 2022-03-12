@@ -51,7 +51,7 @@ fn main() {
     #[cfg(not(feature = "release"))]
     app.insert_resource(LogSettings {
         level: Level::TRACE,
-        filter: "wgpu=warn,bevy=info,winit=info,naga=info".to_string(),
+        filter: "wgpu=warn,bevy=info,winit=info,naga=info,gilrs=info".to_string(),
     });
     app.add_plugins_with(DefaultPlugins, |group| {
         #[cfg(feature = "bundled")]

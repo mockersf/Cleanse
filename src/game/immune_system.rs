@@ -78,6 +78,9 @@ pub fn setup(mut commands: Commands, global_state: Res<GlobalState>, assets: Res
 
 pub fn movements(
     keyboard_input: Res<Input<KeyCode>>,
+    gamepads: Res<Gamepads>,
+    button_inputs: Res<Input<GamepadButton>>,
+    axes: Res<Axis<GamepadAxis>>,
     mut immune_system: Query<(
         &mut RigidBodyPositionComponent,
         &mut RigidBodyForcesComponent,
@@ -100,12 +103,51 @@ pub fn movements(
     if keyboard_input.any_pressed([KeyCode::Down, KeyCode::S]) {
         order.y -= 1.0;
     }
+    for gamepad in gamepads.iter().cloned() {
+        let left_stick_x = axes
+            .get(GamepadAxis(gamepad, GamepadAxisType::LeftStickX))
+            .unwrap();
+        if left_stick_x.abs() > 0.05 {
+            order.x = left_stick_x;
+        }
+        let left_pad_x = axes
+            .get(GamepadAxis(gamepad, GamepadAxisType::DPadX))
+            .unwrap();
+        if left_pad_x.abs() > 0.05 {
+            order.x = left_pad_x;
+        }
+
+        let left_stick_y = axes
+            .get(GamepadAxis(gamepad, GamepadAxisType::LeftStickY))
+            .unwrap();
+        if left_stick_y.abs() > 0.05 {
+            order.y = left_stick_y;
+        }
+        let left_pad_y = axes
+            .get(GamepadAxis(gamepad, GamepadAxisType::DPadY))
+            .unwrap();
+        if left_pad_y.abs() > 0.05 {
+            order.y = left_pad_y;
+        }
+        if button_inputs.pressed(GamepadButton(gamepad, GamepadButtonType::DPadRight)) {
+            order.x += 1.0;
+        }
+        if button_inputs.pressed(GamepadButton(gamepad, GamepadButtonType::DPadLeft)) {
+            order.x -= 1.0;
+        }
+        if button_inputs.pressed(GamepadButton(gamepad, GamepadButtonType::DPadUp)) {
+            order.y += 1.0;
+        }
+        if button_inputs.pressed(GamepadButton(gamepad, GamepadButtonType::DPadDown)) {
+            order.y -= 1.0;
+        }
+    }
 
     let (mut rb_position, mut rb_forces, immune_system) = immune_system.single_mut();
     if order != Vec2::ZERO {
         let position: Vec2 = rb_position.position.translation.into();
         let distance_to_zero = (position.distance_squared(Vec2::ZERO) - 10_000.0).max(0.0);
-        let move_by = order.normalize()
+        let move_by = order.clamp_length_max(1.0)
             * immune_system.speed
             * (1.0 - distance_to_zero / 500_000.0)
             * (1.0 / (host_state.age / global_state.expectancy.max(50.0)).max(1.0))
